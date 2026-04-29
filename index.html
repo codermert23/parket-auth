@@ -1,113 +1,226 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ParkEt - Şifre Sıfırla</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ParkEt – Şifre Sıfırla</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
+      background: #0d1f14;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: #0D1F0F;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
+
     .card {
-      background: #1A2E1C;
-      border: 1px solid #2A3E2C;
-      border-radius: 24px;
-      padding: 48px 40px;
+      background: #152a1e;
+      border: 1px solid #2a4a35;
+      border-radius: 20px;
+      padding: 36px 32px;
+      width: 100%;
+      max-width: 400px;
       text-align: center;
-      max-width: 380px;
-      width: 90%;
     }
-    .icon { font-size: 56px; margin-bottom: 20px; }
-    h1 { color: #4CAF50; font-size: 22px; margin-bottom: 12px; }
-    p { color: #8A9E8C; font-size: 15px; line-height: 1.6; margin-bottom: 20px; }
+
+    .icon { font-size: 48px; margin-bottom: 12px; }
+
+    h2 {
+      color: #4ade80;
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #6b8f79;
+      font-size: 14px;
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    label {
+      display: block;
+      text-align: left;
+      color: #8ab59a;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
     input {
       width: 100%;
-      padding: 14px 16px;
-      background: #0D1F0F;
-      border: 1px solid #2A3E2C;
+      padding: 13px 14px;
+      background: #1e3a28;
+      border: 1px solid #2a4a35;
       border-radius: 12px;
-      color: white;
-      font-size: 15px;
-      margin-bottom: 12px;
+      color: #e8f5e9;
+      font-size: 14px;
       outline: none;
+      margin-bottom: 16px;
+      transition: border-color 0.2s;
     }
-    input:focus { border-color: #4CAF50; }
+
+    input:focus { border-color: #4ade80; }
+
+    .error-text {
+      color: #f87171;
+      font-size: 12px;
+      margin-top: -10px;
+      margin-bottom: 14px;
+      text-align: left;
+    }
+
     button {
       width: 100%;
       padding: 14px;
-      background: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-size: 16px;
+      background: linear-gradient(135deg, #4ade80, #22c55e);
+      color: #0d1f14;
+      font-size: 15px;
       font-weight: 700;
+      border: none;
+      border-radius: 14px;
       cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    button:hover { opacity: 0.9; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .msg {
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.5;
       margin-top: 8px;
     }
-    button:hover { background: #45a049; }
-    .error { color: #ff6b6b; font-size: 13px; margin-top: 8px; }
-    #success { display: none; }
-    #form-section { display: none; }
-    #loading { color: #8A9E8C; }
+
+    .msg.success { background: #14532d44; color: #4ade80; border: 1px solid #4ade8044; }
+    .msg.error   { background: #7f1d1d44; color: #f87171; border: 1px solid #f8717144; }
+
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid #2a4a35;
+      border-top-color: #4ade80;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #view-loading, #view-form, #view-success, #view-error { display: none; }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="icon">🔐</div>
-    <h1>Şifre Sıfırla</h1>
+<div class="card">
 
-    <div id="loading"><p>Yükleniyor...</p></div>
-
-    <div id="form-section">
-      <p>Yeni şifreni gir.</p>
-      <input type="password" id="password" placeholder="Yeni şifre" />
-      <input type="password" id="password2" placeholder="Şifre tekrar" />
-      <button onclick="resetPassword()">Şifremi Güncelle</button>
-      <p class="error" id="error-msg"></p>
-    </div>
-
-    <div id="success">
-      <p>✅ Şifren güncellendi!<br>Uygulamaya geri dönüp giriş yapabilirsin.</p>
-    </div>
+  <!-- Yükleniyor -->
+  <div id="view-loading">
+    <div class="spinner"></div>
+    <p class="subtitle">Doğrulanıyor…</p>
   </div>
 
-  <script>
-    const { createClient } = supabase;
-    const client = createClient(
-      'https://fnjrllimqrlprxoifevz.supabase.co',
-      'sb_publishable_e6KSlqqjma2stp2v2bHRIQ_aW3drTGx'
-    );
+  <!-- Form -->
+  <div id="view-form">
+    <div class="icon">🔑</div>
+    <h2>Yeni Şifre Belirle</h2>
+    <p class="subtitle">Hesabın için yeni bir şifre oluştur.</p>
+    <label>Yeni Şifre</label>
+    <input type="password" id="pass1" placeholder="••••••••" />
+    <label>Şifre Tekrar</label>
+    <input type="password" id="pass2" placeholder="••••••••" />
+    <p class="error-text" id="form-error"></p>
+    <button id="btn" onclick="submit()">Şifreyi Güncelle</button>
+  </div>
 
-    client.auth.onAuthStateChange((event, session) => {
-      document.getElementById('loading').style.display = 'none';
-      if (event === 'PASSWORD_RECOVERY') {
-        document.getElementById('form-section').style.display = 'block';
-      }
-    });
+  <!-- Başarı -->
+  <div id="view-success">
+    <div class="icon">✅</div>
+    <h2>Şifre Güncellendi</h2>
+    <p class="subtitle">Yeni şifrenle uygulamaya giriş yapabilirsin.</p>
+  </div>
 
-    async function resetPassword() {
-      const pass  = document.getElementById('password').value;
-      const pass2 = document.getElementById('password2').value;
-      const errEl = document.getElementById('error-msg');
+  <!-- Hata -->
+  <div id="view-error">
+    <div class="icon">⚠️</div>
+    <h2>Link Geçersiz</h2>
+    <p class="subtitle" id="error-msg">Link süresi dolmuş veya geçersiz. Uygulamadan tekrar şifre sıfırlama talebinde bulun.</p>
+  </div>
 
-      if (pass.length < 6) { errEl.textContent = 'En az 6 karakter gir.'; return; }
-      if (pass !== pass2)  { errEl.textContent = 'Şifreler eşleşmiyor.'; return; }
+</div>
 
-      const { error } = await client.auth.updateUser({ password: pass });
-      if (error) {
-        errEl.textContent = 'Hata: ' + error.message;
-      } else {
-        document.getElementById('form-section').style.display = 'none';
-        document.getElementById('success').style.display = 'block';
-      }
+<script>
+  const SUPABASE_URL     = 'https://fnjrllimqrlprxoifevz.supabase.co';
+  const SUPABASE_ANON    = 'sb_publishable_e6KSlqqjma2stp2v2bHRIQ_aW3drTGx';
+
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON, {
+    auth: { flowType: 'pkce' }
+  });
+
+  function show(id) {
+    ['view-loading','view-form','view-success','view-error']
+      .forEach(v => document.getElementById(v).style.display = v === id ? 'block' : 'none');
+  }
+
+  async function init() {
+    show('view-loading');
+
+    // PKCE akışı: URL'de ?code= varsa exchange et
+    const code = new URLSearchParams(window.location.search).get('code');
+    if (code) {
+      const { error } = await db.auth.exchangeCodeForSession(code);
+      if (error) { show('view-error'); return; }
+      show('view-form');
+      return;
     }
-  </script>
+
+    // Implicit akış fallback: hash'te token var mı?
+    const hash = new URLSearchParams(window.location.hash.replace('#',''));
+    if (hash.get('access_token') && hash.get('type') === 'recovery') {
+      show('view-form');
+      return;
+    }
+
+    // Mevcut oturuma bak
+    const { data: { session } } = await db.auth.getSession();
+    if (session) { show('view-form'); return; }
+
+    show('view-error');
+  }
+
+  async function submit() {
+    const p1  = document.getElementById('pass1').value;
+    const p2  = document.getElementById('pass2').value;
+    const err = document.getElementById('form-error');
+    const btn = document.getElementById('btn');
+
+    err.textContent = '';
+
+    if (p1.length < 6)   { err.textContent = 'Şifre en az 6 karakter olmalı.'; return; }
+    if (p1 !== p2)        { err.textContent = 'Şifreler eşleşmiyor.'; return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Güncelleniyor…';
+
+    const { error } = await db.auth.updateUser({ password: p1 });
+
+    if (error) {
+      err.textContent = 'Hata: ' + error.message;
+      btn.disabled = false;
+      btn.textContent = 'Şifreyi Güncelle';
+      return;
+    }
+
+    show('view-success');
+  }
+
+  init();
+</script>
 </body>
 </html>
