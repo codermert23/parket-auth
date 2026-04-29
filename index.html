@@ -171,14 +171,18 @@
   async function init() {
     show('view-loading');
 
-    // PKCE akışı: URL'de ?code= varsa exchange et
-    const code = new URLSearchParams(window.location.search).get('code');
-    if (code) {
-      const { error } = await db.auth.exchangeCodeForSession(code);
-      if (error) { show('view-error'); return; }
-      show('view-form');
-      return;
-    }
+  // Supabase JS v2 hash'teki token'ı otomatik işler.
+  // Kısa bir bekleme sonrası session kontrolü yeterli.
+  await new Promise(r => setTimeout(r, 800));
+
+  const { data: { session } } = await db.auth.getSession();
+
+  if (session) {
+    show('view-form');
+  } else {
+    show('view-error');
+  }
+  }
 
     // Implicit akış fallback: hash'te token var mı?
     const hash = new URLSearchParams(window.location.hash.replace('#',''));
