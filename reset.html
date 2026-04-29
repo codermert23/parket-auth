@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ParkEt - Şifre Sıfırla</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #0D1F0F;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    .card {
+      background: #1A2E1C;
+      border: 1px solid #2A3E2C;
+      border-radius: 24px;
+      padding: 48px 40px;
+      text-align: center;
+      max-width: 380px;
+      width: 90%;
+    }
+    .icon { font-size: 56px; margin-bottom: 20px; }
+    h1 { color: #4CAF50; font-size: 22px; margin-bottom: 12px; }
+    p { color: #8A9E8C; font-size: 15px; line-height: 1.6; margin-bottom: 20px; }
+    input {
+      width: 100%;
+      padding: 14px 16px;
+      background: #0D1F0F;
+      border: 1px solid #2A3E2C;
+      border-radius: 12px;
+      color: white;
+      font-size: 15px;
+      margin-bottom: 12px;
+      outline: none;
+    }
+    input:focus { border-color: #4CAF50; }
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    button:hover { background: #45a049; }
+    .error { color: #ff6b6b; font-size: 13px; margin-top: 8px; }
+    #success { display: none; }
+    #form-section { display: none; }
+    #loading { color: #8A9E8C; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">🔐</div>
+    <h1>Şifre Sıfırla</h1>
+
+    <div id="loading"><p>Yükleniyor...</p></div>
+
+    <div id="form-section">
+      <p>Yeni şifreni gir.</p>
+      <input type="password" id="password" placeholder="Yeni şifre" />
+      <input type="password" id="password2" placeholder="Şifre tekrar" />
+      <button onclick="resetPassword()">Şifremi Güncelle</button>
+      <p class="error" id="error-msg"></p>
+    </div>
+
+    <div id="success">
+      <p>✅ Şifren güncellendi!<br>Uygulamaya geri dönüp giriş yapabilirsin.</p>
+    </div>
+  </div>
+
+  <script>
+    const { createClient } = supabase;
+    const client = createClient(
+      'https://fnjrllimqrlprxoifevz.supabase.co',
+      'sb_publishable_e6KSlqqjma2stp2v2bHRIQ_aW3drTGx'
+    );
+
+    client.auth.onAuthStateChange((event, session) => {
+      document.getElementById('loading').style.display = 'none';
+      if (event === 'PASSWORD_RECOVERY') {
+        document.getElementById('form-section').style.display = 'block';
+      }
+    });
+
+    async function resetPassword() {
+      const pass  = document.getElementById('password').value;
+      const pass2 = document.getElementById('password2').value;
+      const errEl = document.getElementById('error-msg');
+
+      if (pass.length < 6) { errEl.textContent = 'En az 6 karakter gir.'; return; }
+      if (pass !== pass2)  { errEl.textContent = 'Şifreler eşleşmiyor.'; return; }
+
+      const { error } = await client.auth.updateUser({ password: pass });
+      if (error) {
+        errEl.textContent = 'Hata: ' + error.message;
+      } else {
+        document.getElementById('form-section').style.display = 'none';
+        document.getElementById('success').style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>
