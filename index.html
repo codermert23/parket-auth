@@ -160,7 +160,7 @@
 
   const { createClient } = supabase;
   const db = createClient(SUPABASE_URL, SUPABASE_ANON, {
-    auth: { flowType: 'pkce' }
+  auth: { persistSession: false }
   });
 
   function show(id) {
