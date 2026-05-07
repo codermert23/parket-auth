@@ -7,223 +7,122 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
-      background: #0d1f14;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: #0d1f14; min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
-
     .card {
-      background: #152a1e;
-      border: 1px solid #2a4a35;
-      border-radius: 20px;
-      padding: 36px 32px;
-      width: 100%;
-      max-width: 400px;
-      text-align: center;
+      background: #152a1e; border: 1px solid #2a4a35;
+      border-radius: 20px; padding: 36px 32px;
+      width: 100%; max-width: 400px; text-align: center;
     }
-
     .icon { font-size: 48px; margin-bottom: 12px; }
-
-    h2 {
-      color: #4ade80;
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .subtitle {
-      color: #6b8f79;
-      font-size: 14px;
-      margin-bottom: 28px;
-      line-height: 1.5;
-    }
-
-    label {
-      display: block;
-      text-align: left;
-      color: #8ab59a;
-      font-size: 12px;
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-
+    h2 { color: #4ade80; font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+    .sub { color: #6b8f79; font-size: 14px; margin-bottom: 28px; line-height: 1.5; }
+    label { display: block; text-align: left; color: #8ab59a; font-size: 12px; font-weight: 600; margin-bottom: 6px; }
     input {
-      width: 100%;
-      padding: 13px 14px;
-      background: #1e3a28;
-      border: 1px solid #2a4a35;
-      border-radius: 12px;
-      color: #e8f5e9;
-      font-size: 14px;
-      outline: none;
-      margin-bottom: 16px;
-      transition: border-color 0.2s;
+      width: 100%; padding: 13px 14px; background: #1e3a28;
+      border: 1px solid #2a4a35; border-radius: 12px;
+      color: #e8f5e9; font-size: 14px; outline: none;
+      margin-bottom: 16px; transition: border-color 0.2s;
     }
-
     input:focus { border-color: #4ade80; }
-
-    .error-text {
-      color: #f87171;
-      font-size: 12px;
-      margin-top: -10px;
-      margin-bottom: 14px;
-      text-align: left;
-    }
-
+    .err { color: #f87171; font-size: 12px; margin-top: -10px; margin-bottom: 14px; text-align: left; }
     button {
-      width: 100%;
-      padding: 14px;
+      width: 100%; padding: 14px;
       background: linear-gradient(135deg, #4ade80, #22c55e);
-      color: #0d1f14;
-      font-size: 15px;
-      font-weight: 700;
-      border: none;
-      border-radius: 14px;
-      cursor: pointer;
-      transition: opacity 0.2s;
+      color: #0d1f14; font-size: 15px; font-weight: 700;
+      border: none; border-radius: 14px; cursor: pointer; transition: opacity 0.2s;
     }
-
     button:hover { opacity: 0.9; }
     button:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    .msg {
-      padding: 14px;
-      border-radius: 12px;
-      font-size: 13px;
-      line-height: 1.5;
-      margin-top: 8px;
-    }
-
-    .msg.success { background: #14532d44; color: #4ade80; border: 1px solid #4ade8044; }
-    .msg.error   { background: #7f1d1d44; color: #f87171; border: 1px solid #f8717144; }
-
     .spinner {
-      width: 36px; height: 36px;
-      border: 3px solid #2a4a35;
-      border-top-color: #4ade80;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto 16px;
+      width: 36px; height: 36px; border: 3px solid #2a4a35;
+      border-top-color: #4ade80; border-radius: 50%;
+      animation: spin 0.8s linear infinite; margin: 0 auto 16px;
     }
-
     @keyframes spin { to { transform: rotate(360deg); } }
-
-    #view-loading, #view-form, #view-success, #view-error { display: none; }
   </style>
 </head>
 <body>
-<div class="card">
-
-  <!-- Yükleniyor -->
-  <div id="view-loading">
-    <div class="spinner"></div>
-    <p class="subtitle">Doğrulanıyor…</p>
-  </div>
-
-  <!-- Form -->
-  <div id="view-form">
-    <div class="icon">🔑</div>
-    <h2>Yeni Şifre Belirle</h2>
-    <p class="subtitle">Hesabın için yeni bir şifre oluştur.</p>
-    <label>Yeni Şifre</label>
-    <input type="password" id="pass1" placeholder="••••••••" />
-    <label>Şifre Tekrar</label>
-    <input type="password" id="pass2" placeholder="••••••••" />
-    <p class="error-text" id="form-error"></p>
-    <button id="btn" onclick="submit()">Şifreyi Güncelle</button>
-  </div>
-
-  <!-- Başarı -->
-  <div id="view-success">
-    <div class="icon">✅</div>
-    <h2>Şifre Güncellendi</h2>
-    <p class="subtitle">Yeni şifrenle uygulamaya giriş yapabilirsin.</p>
-  </div>
-
-  <!-- Hata -->
-  <div id="view-error">
-    <div class="icon">⚠️</div>
-    <h2>Link Geçersiz</h2>
-    <p class="subtitle" id="error-msg">Link süresi dolmuş veya geçersiz. Uygulamadan tekrar şifre sıfırlama talebinde bulun.</p>
-  </div>
-
+<div class="card" id="root">
+  <div class="spinner"></div>
+  <p style="color:#6b8f79;font-size:14px;">Doğrulanıyor…</p>
 </div>
 
 <script>
-  const SUPABASE_URL     = 'https://fnjrllimqrlprxoifevz.supabase.co';
-  const SUPABASE_ANON    = 'sb_publishable_e6KSlqqjma2stp2v2bHRIQ_aW3drTGx';
+  const SUPABASE_URL  = 'https://fnjrllimqrlprxoifevz.supabase.co';
+  const SUPABASE_ANON = 'sb_publishable_e6KSlqqjma2stp2v2bHRIQ_aW3drTGx';
 
-  const { createClient } = supabase;
-  const db = createClient(SUPABASE_URL, SUPABASE_ANON, {
-  auth: { persistSession: false }
-  });
+  const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
-  function show(id) {
-    ['view-loading','view-form','view-success','view-error']
-      .forEach(v => document.getElementById(v).style.display = v === id ? 'block' : 'none');
+  function showForm() {
+    document.getElementById('root').innerHTML = `
+      <div class="icon">🔑</div>
+      <h2>Yeni Şifre Belirle</h2>
+      <p class="sub">Hesabın için yeni bir şifre oluştur.</p>
+      <label>Yeni Şifre</label>
+      <input type="password" id="p1" placeholder="••••••••" />
+      <label>Şifre Tekrar</label>
+      <input type="password" id="p2" placeholder="••••••••" />
+      <p class="err" id="ferr"></p>
+      <button onclick="save()">Şifreyi Güncelle</button>
+    `;
   }
 
-  async function init() {
-    show('view-loading');
-
-  // Supabase JS v2 hash'teki token'ı otomatik işler.
-  // Kısa bir bekleme sonrası session kontrolü yeterli.
-  await new Promise(r => setTimeout(r, 800));
-
-  const { data: { session } } = await db.auth.getSession();
-
-  if (session) {
-    show('view-form');
-  } else {
-    show('view-error');
-  }
+  function showError() {
+    document.getElementById('root').innerHTML = `
+      <div class="icon">⚠️</div>
+      <h2>Link Geçersiz</h2>
+      <p class="sub">Link süresi dolmuş veya geçersiz.<br>Uygulamadan tekrar şifre sıfırlama talebinde bulun.</p>
+    `;
   }
 
-    // Implicit akış fallback: hash'te token var mı?
-    const hash = new URLSearchParams(window.location.hash.replace('#',''));
-    if (hash.get('access_token') && hash.get('type') === 'recovery') {
-      show('view-form');
-      return;
-    }
+  async function save() {
+    const p1 = document.getElementById('p1').value;
+    const p2 = document.getElementById('p2').value;
+    const e  = document.getElementById('ferr');
+    e.textContent = '';
+    if (p1.length < 6) { e.textContent = 'Şifre en az 6 karakter olmalı.'; return; }
+    if (p1 !== p2)      { e.textContent = 'Şifreler eşleşmiyor.'; return; }
 
-    // Mevcut oturuma bak
-    const { data: { session } } = await db.auth.getSession();
-    if (session) { show('view-form'); return; }
-
-    show('view-error');
-  }
-
-  async function submit() {
-    const p1  = document.getElementById('pass1').value;
-    const p2  = document.getElementById('pass2').value;
-    const err = document.getElementById('form-error');
-    const btn = document.getElementById('btn');
-
-    err.textContent = '';
-
-    if (p1.length < 6)   { err.textContent = 'Şifre en az 6 karakter olmalı.'; return; }
-    if (p1 !== p2)        { err.textContent = 'Şifreler eşleşmiyor.'; return; }
-
-    btn.disabled = true;
-    btn.textContent = 'Güncelleniyor…';
+    const btn = document.querySelector('button');
+    btn.disabled = true; btn.textContent = 'Güncelleniyor…';
 
     const { error } = await db.auth.updateUser({ password: p1 });
-
     if (error) {
-      err.textContent = 'Hata: ' + error.message;
-      btn.disabled = false;
-      btn.textContent = 'Şifreyi Güncelle';
-      return;
+      e.textContent = 'Hata: ' + error.message;
+      btn.disabled = false; btn.textContent = 'Şifreyi Güncelle';
+    } else {
+      document.getElementById('root').innerHTML = `
+        <div class="icon">✅</div>
+        <h2>Şifre Güncellendi</h2>
+        <p class="sub">Yeni şifrenle uygulamaya giriş yapabilirsin.</p>
+      `;
     }
-
-    show('view-success');
   }
 
+  // Önce onAuthStateChange dinle (asıl yöntem)
+  let done = false;
+  db.auth.onAuthStateChange((event, session) => {
+    if (done) return;
+    if (event === 'PASSWORD_RECOVERY' || (event === 'SIGNED_IN' && session)) {
+      done = true;
+      showForm();
+    }
+  });
+
+  // 4 saniye içinde event gelmezse session'a bak
+  setTimeout(async () => {
+    if (done) return;
+    const { data: { session } } = await db.auth.getSession();
+    done = true;
+    session ? showForm() : showError();
+  }, 4000);
+</script>
+</body>
+</html>
   init();
 </script>
 </body>
