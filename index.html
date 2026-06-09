@@ -84,7 +84,9 @@
 <script>
   var URL  = 'https://fnjrllimqrlprxoifevz.supabase.co';
   var ANON = 'sb_publishable_e6KSlqqjma2stp2v2bHRIQ_aW3drTGx';
-  var db   = supabase.createClient(URL, ANON);
+  var db = supabase.createClient(URL, ANON, {
+  auth: { flowType: 'implicit' }
+  });
   var done = false;
 
   function show(id) {
@@ -131,7 +133,7 @@
       if (res.data && res.data.session) { show('s-form'); }
       else                              { show('s-err');  }
     });
-  }, 4000);
+  }, 10000);
 </script>
 </body>
 </html>
