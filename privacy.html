@@ -1,0 +1,503 @@
+<title>ParkEt Gizlilik Politikası</title>
+<style>
+  :root{
+    --bg:#F6F8F3;
+    --surface:#FFFFFF;
+    --surface-2:#EEF3EC;
+    --text:#152318;
+    --text-muted:#57685A;
+    --border:#DEE6DB;
+    --accent:#1E8449;
+    --accent-soft:#E5F4EA;
+    --gold:#8A6D1A;
+    --gold-soft:#FBF3DC;
+    --red:#C0392B;
+    --code-bg:#F0F0EC;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0D1F0F;
+      --surface:#152717;
+      --surface-2:#1E3320;
+      --text:#ECF0F1;
+      --text-muted:#B9C6BA;
+      --border:#2C4A2E;
+      --accent:#3FD07E;
+      --accent-soft:#1E3320;
+      --gold:#F4D03F;
+      --gold-soft:#2A2412;
+      --red:#F1948A;
+      --code-bg:#0F1F10;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0D1F0F;
+    --surface:#152717;
+    --surface-2:#1E3320;
+    --text:#ECF0F1;
+    --text-muted:#B9C6BA;
+    --border:#2C4A2E;
+    --accent:#3FD07E;
+    --accent-soft:#1E3320;
+    --gold:#F4D03F;
+    --gold-soft:#2A2412;
+    --red:#F1948A;
+    --code-bg:#0F1F10;
+  }
+
+  * { box-sizing: border-box; }
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Source Serif 4", Georgia, "Times New Roman", serif;
+    line-height:1.65;
+    padding-inline:16px;
+    padding-block:32px;
+  }
+  h1,h2,h3,.eyebrow,nav,.pill,.meta,code,.tocnum{
+    font-family:"Manrope", "Segoe UI", system-ui, sans-serif;
+  }
+  .mono{ font-family:"JetBrains Mono", ui-monospace, Consolas, monospace; }
+
+  .page{
+    max-width:760px;
+    margin-inline:auto;
+  }
+
+  header.hero{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:28px 28px 24px;
+    margin-bottom:22px;
+  }
+  .eyebrow{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin-bottom:14px;
+  }
+  .eyebrow .dot{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--accent);
+    flex:none;
+  }
+  h1{
+    font-size:clamp(28px,5vw,38px);
+    font-weight:800;
+    letter-spacing:-0.01em;
+    text-wrap:balance;
+    margin:0 0 10px;
+  }
+  .lede{
+    color:var(--text-muted);
+    font-size:16px;
+    max-width:58ch;
+    margin:0 0 18px;
+  }
+  .meta-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px 10px;
+  }
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--text);
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:999px;
+    padding:6px 12px;
+  }
+  .pill b{ font-variant-numeric:tabular-nums; }
+
+  nav.toc{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:18px 20px;
+    margin-bottom:26px;
+  }
+  nav.toc .toc-title{
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--text-muted);
+    margin-bottom:10px;
+  }
+  nav.toc ol{
+    columns:2;
+    column-gap:20px;
+    margin:0;
+    padding:0;
+    list-style:none;
+    counter-reset:toc;
+  }
+  nav.toc li{
+    counter-increment:toc;
+    break-inside:avoid;
+    margin-bottom:7px;
+  }
+  nav.toc a{
+    display:flex;
+    gap:8px;
+    color:var(--text);
+    text-decoration:none;
+    font-size:13.5px;
+    font-weight:600;
+  }
+  nav.toc a:hover{ color:var(--accent); }
+  nav.toc .tocnum{
+    color:var(--accent);
+    font-variant-numeric:tabular-nums;
+    flex:none;
+  }
+
+  section.card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:26px 28px;
+    margin-bottom:16px;
+    scroll-margin-top:16px;
+  }
+  section.card h2{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    font-size:20px;
+    font-weight:800;
+    margin:0 0 12px;
+    color:var(--text);
+  }
+  section.card h2 .num{
+    color:var(--accent);
+    font-size:14px;
+    font-variant-numeric:tabular-nums;
+  }
+  section.card h3{
+    font-size:15px;
+    font-weight:700;
+    margin:18px 0 6px;
+  }
+  section.card p{ margin:0 0 12px; }
+  section.card p:last-child{ margin-bottom:0; }
+  section.card ul{ margin:0 0 12px; padding-left:20px; }
+  section.card li{ margin-bottom:6px; }
+  section.card li:last-child{ margin-bottom:0; }
+  section.card a{ color:var(--accent); }
+
+  .note{
+    background:var(--accent-soft);
+    border:1px solid var(--border);
+    border-left:3px solid var(--accent);
+    border-radius:10px;
+    padding:12px 14px;
+    font-size:14px;
+    color:var(--text);
+    margin:14px 0;
+  }
+  .note.warn{
+    background:var(--gold-soft);
+    border-left-color:var(--gold);
+  }
+
+  .table-wrap{ overflow-x:auto; margin:14px 0; }
+  table{
+    width:100%;
+    min-width:560px;
+    border-collapse:collapse;
+    font-family:"Manrope", sans-serif;
+    font-size:13.5px;
+  }
+  th,td{
+    text-align:left;
+    padding:10px 12px;
+    border-bottom:1px solid var(--border);
+    vertical-align:top;
+  }
+  thead th{
+    color:var(--text-muted);
+    font-size:11.5px;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    font-weight:700;
+    border-bottom:1px solid var(--border);
+  }
+  tbody tr:last-child td{ border-bottom:none; }
+  td.cat{ font-weight:700; white-space:nowrap; }
+  code.mono{
+    background:var(--code-bg);
+    border:1px solid var(--border);
+    border-radius:5px;
+    padding:1px 6px;
+    font-size:12.5px;
+  }
+
+  .badge{
+    display:inline-block;
+    font-family:"Manrope", sans-serif;
+    font-size:11px;
+    font-weight:700;
+    padding:2px 8px;
+    border-radius:999px;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    color:var(--text-muted);
+  }
+  .badge.plus{ background:var(--gold-soft); color:var(--gold); border-color:var(--gold); }
+
+  footer{
+    text-align:center;
+    color:var(--text-muted);
+    font-family:"Manrope", sans-serif;
+    font-size:12.5px;
+    padding:26px 8px 8px;
+  }
+  footer a{ color:var(--accent); }
+
+  @media (max-width: 480px){
+    nav.toc ol{ columns:1; }
+    section.card{ padding:20px; }
+    header.hero{ padding:22px 20px; }
+  }
+</style>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@500&display=swap">
+
+<div class="page">
+
+  <header class="hero">
+    <div class="eyebrow"><span class="dot"></span> Gizlilik Politikası</div>
+    <h1>ParkEt kişisel verilerinizi nasıl işler</h1>
+    <p class="lede">ParkEt, sürücülerin boşalan park yerlerini birbirine bildirdiği bir topluluk uygulamasıdır. Bu sayfa; hangi verileri topladığımızı, neden topladığımızı, kimlerle paylaştığımızı ve haklarınızı açıklar.</p>
+    <div class="meta-row">
+      <span class="pill">Yürürlük tarihi <b class="mono">17.09.2026</b></span>
+      <span class="pill">Uygulama <b>ParkEt</b> · <span class="mono">com.codermert.parket</span></span>
+      <span class="pill">İletişim <b class="mono">mert.ismet.ozel@gmail.com</b></span>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="İçindekiler">
+    <div class="toc-title">Bölümler</div>
+    <ol>
+      <li><a href="#s1"><span class="tocnum">01</span> Kapsam ve veri sorumlusu</a></li>
+      <li><a href="#s2"><span class="tocnum">02</span> Topladığımız veriler</a></li>
+      <li><a href="#s3"><span class="tocnum">03</span> Konum verisi (özel bölüm)</a></li>
+      <li><a href="#s4"><span class="tocnum">04</span> Verileri kullanma amaçlarımız</a></li>
+      <li><a href="#s5"><span class="tocnum">05</span> Üçüncü taraf hizmet sağlayıcılar</a></li>
+      <li><a href="#s6"><span class="tocnum">06</span> Reklamlar ve onay (UMP)</a></li>
+      <li><a href="#s7"><span class="tocnum">07</span> Saklama süresi ve silme</a></li>
+      <li><a href="#s8"><span class="tocnum">08</span> Güvenlik</a></li>
+      <li><a href="#s9"><span class="tocnum">09</span> Haklarınız (KVKK / GDPR)</a></li>
+      <li><a href="#s10"><span class="tocnum">10</span> Çocukların gizliliği</a></li>
+      <li><a href="#s11"><span class="tocnum">11</span> Değişiklikler ve iletişim</a></li>
+    </ol>
+  </nav>
+
+  <section class="card" id="s1">
+    <h2><span class="num">01</span> Kapsam ve veri sorumlusu</h2>
+    <p>Bu politika, ParkEt mobil uygulamasının (Android ve gelecekte iOS) topladığı, işlediği ve sakladığı kişisel verileri kapsar. Uygulamanın geliştiricisi ve veri sorumlusu, bu sayfanın altında belirtilen e-posta adresinden ulaşılabilen bağımsız geliştiricidir (tüzel bir şirket değildir).</p>
+    <p>ParkEt'i kullanarak bu politikada açıklanan veri işleme uygulamalarını kabul etmiş olursunuz. Uygulamayı kullanmak için hesap oluşturmanız gerekir; hesap oluşturmadan yalnızca bu sayfayı görüntüleyebilirsiniz.</p>
+  </section>
+
+  <section class="card" id="s2">
+    <h2><span class="num">02</span> Topladığımız veriler</h2>
+    <p>Aşağıdaki tablo, hangi veri kategorisini hangi amaçla topladığımızı ve verinin nerede tutulduğunu özetler. Detaylar bu bölümün altında ve <a href="#s5">05. Üçüncü taraf hizmet sağlayıcılar</a>'da devam eder.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Veri kategorisi</th><th>Örnek</th><th>Nerede tutulur</th><th>Zorunlu mu</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cat">Hesap bilgisi</td>
+            <td>E-posta, şifre (veya Google hesabı kimliği), kayıt tarihi</td>
+            <td><code class="mono">Supabase</code> · <code class="mono">Firebase Auth</code></td>
+            <td>Evet</td>
+          </tr>
+          <tr>
+            <td class="cat">Araç bilgisi</td>
+            <td>Plaka, marka (marka bilgisi isteğe bağlı)</td>
+            <td><code class="mono">Supabase</code></td>
+            <td>Kısmen</td>
+          </tr>
+          <tr>
+            <td class="cat">Konum</td>
+            <td>Hassas GPS koordinatı, park yeri bildirimi konumu</td>
+            <td><code class="mono">Supabase</code> (anlık, bkz. <a href="#s3">03</a>)</td>
+            <td>Evet</td>
+          </tr>
+          <tr>
+            <td class="cat">Puan &amp; rozet geçmişi</td>
+            <td>ParkPuan bakiyesi, işlem geçmişi, kazanılan rozetler</td>
+            <td><code class="mono">Supabase</code></td>
+            <td>Evet</td>
+          </tr>
+          <tr>
+            <td class="cat">Bildirim jetonu</td>
+            <td>Cihaz FCM token'ı</td>
+            <td><code class="mono">Firebase Cloud Messaging</code></td>
+            <td>Hayır</td>
+          </tr>
+          <tr>
+            <td class="cat">Abonelik &amp; satın alma</td>
+            <td>ParkEt Plus abonelik durumu, satın alma kimliği, fatura ülkesi</td>
+            <td><code class="mono">RevenueCat</code> · <code class="mono">Google Play</code></td>
+            <td>Hayır <span class="badge plus">yalnız abone</span></td>
+          </tr>
+          <tr>
+            <td class="cat">Reklam kimliği</td>
+            <td>Google Advertising ID, gösterim/tıklama sinyalleri</td>
+            <td><code class="mono">Google AdMob</code></td>
+            <td>Hayır <span class="badge">yalnız ücretsiz kullanıcı</span></td>
+          </tr>
+          <tr>
+            <td class="cat">Cihaz &amp; tanı verisi</td>
+            <td>Uygulama sürümü, işletim sistemi, çökme/hata kayıtları</td>
+            <td><code class="mono">Firebase</code></td>
+            <td>Hayır</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Ödeme kartı bilgilerinizi ParkEt asla görmez veya saklamaz — satın almalar tamamen Google Play'in kendi ödeme altyapısında gerçekleşir.</p>
+  </section>
+
+  <section class="card" id="s3">
+    <h2><span class="num">03</span> Konum verisi <span class="badge">özel bölüm</span></h2>
+    <p>Konum, ParkEt'in çekirdek işlevi için gereklidir: bir park yerini "boşaltıyorum" olarak bildirmek ve haritada yakınınızdaki yerleri görmek konum izni gerektirir.</p>
+    <h3>Ne zaman toplanır</h3>
+    <ul>
+      <li><strong>Harita ekranı açıkken:</strong> yakınınızdaki park yerlerini göstermek için anlık konumunuz cihazda kullanılır.</li>
+      <li><strong>Bir yer bildirirken / ayırtırken:</strong> bildirdiğiniz konum diğer kullanıcılara (yaklaşık olarak) gösterilir, canlı takip sürüyorsa (rezervasyon akışı) konumunuz kısa aralıklarla güncellenir — bu akış, harita sekmesindeyken uygulama arka plana alınsa bile (süreç canlı kaldığı sürece) devam eder; uygulama tamamen kapatılırsa durur.</li>
+      <li><strong>ParkEt Plus abonelerinde ek olarak:</strong> "çevrende yeni spot" bildirimini gönderebilmek için konumunuz sunucuda ayrı bir tabloda (yalnızca aktif abone iken) tutulur. Bu kayıt en fazla 2 saat saklanır, otomatik olarak silinir ve abonelik sona erdiğinde/oturum kapatıldığında hemen silinir.</li>
+    </ul>
+    <p>Konum verisi hiçbir zaman reklam şirketleriyle veya ParkEt dışı üçüncü taraflarla <em>satılmaz</em>. Yalnızca yukarıdaki işlevleri sağlamak için kullanılır.</p>
+  </section>
+
+  <section class="card" id="s4">
+    <h2><span class="num">04</span> Verileri kullanma amaçlarımız</h2>
+    <ul>
+      <li>Hesabınızı oluşturmak, doğrulamak ve oturumunuzu güvenli tutmak.</li>
+      <li>Yakınınızdaki park yeri bildirimlerini göstermek ve sizin bildirimlerinizi diğer kullanıcılara ulaştırmak.</li>
+      <li>ParkPuan ekonomisini işletmek (kazanım, harcama, ceza/ödül mekanizması).</li>
+      <li>Rezervasyon ve çıkış bildirimi anında anlık push bildirimi göndermek.</li>
+      <li>ParkEt Plus aboneliğinizi doğrulamak ve abonelik ayrıcalıklarını (reklamsız kullanım, aylık ParkPuan, geniş tarama yarıçapı, çevre bildirimi) sağlamak.</li>
+      <li>Ücretsiz katmanda uygulamayı sürdürülebilir tutmak için reklam göstermek.</li>
+      <li>Kötüye kullanımı (sahte bildirim, puan istismarı) tespit etmek ve önlemek.</li>
+      <li>Hataları teşhis etmek ve uygulamayı iyileştirmek.</li>
+    </ul>
+  </section>
+
+  <section class="card" id="s5">
+    <h2><span class="num">05</span> Üçüncü taraf hizmet sağlayıcılar</h2>
+    <p>ParkEt, aşağıdaki alt işleyicileri (sub-processor) kullanır. Her biri kendi gizlilik politikasına tabidir ve verilerinizi yalnızca ParkEt adına, belirtilen amaç için işler.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Hizmet</th><th>Rolü</th><th>Politika</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cat">Supabase</td>
+            <td>Ana veritabanı — hesap, konum, puan, park yeri verileri</td>
+            <td><a href="https://supabase.com/privacy" target="_blank" rel="noopener">supabase.com/privacy</a></td>
+          </tr>
+          <tr>
+            <td class="cat">Firebase (Google)</td>
+            <td>Kimlik doğrulama, push bildirimleri (FCM), tanı/çökme kayıtları</td>
+            <td><a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener">firebase.google.com/support/privacy</a></td>
+          </tr>
+          <tr>
+            <td class="cat">Google Maps Platform</td>
+            <td>Harita gösterimi</td>
+            <td><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a></td>
+          </tr>
+          <tr>
+            <td class="cat">Google Sign-In</td>
+            <td>Google hesabıyla giriş (isteğe bağlı)</td>
+            <td><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a></td>
+          </tr>
+          <tr>
+            <td class="cat">RevenueCat</td>
+            <td>Abonelik/satın alma yönetimi (ParkEt Plus)</td>
+            <td><a href="https://www.revenuecat.com/privacy" target="_blank" rel="noopener">revenuecat.com/privacy</a></td>
+          </tr>
+          <tr>
+            <td class="cat">Google Play Billing</td>
+            <td>Ödeme işleme</td>
+            <td><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a></td>
+          </tr>
+          <tr>
+            <td class="cat">Google AdMob</td>
+            <td>Reklam gösterimi (yalnız ücretsiz kullanıcı)</td>
+            <td><a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener">policies.google.com/technologies/ads</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card" id="s6">
+    <h2><span class="num">06</span> Reklamlar ve onay (UMP)</h2>
+    <p>ParkEt Plus'a abone olmayan kullanıcılara, uygulama içi doğal duraklarda (günün ilk profil açılışında ve bir çıkış bildirimi onaylandıktan sonra) tam ekran reklam gösterilir. ParkEt Plus aboneleri hiçbir reklam görmez.</p>
+    <p>Avrupa Ekonomik Alanı, Birleşik Krallık ve benzer bölgelerdeki kullanıcılara, Google'ın Kullanıcı Mesajlaşma Platformu (UMP) aracılığıyla kişiselleştirilmiş reklam onay ekranı gösterilir; tercihiniz onaylanmadan kişiselleştirilmiş reklam yüklenmez.</p>
+    <div class="note warn">Reklam kimliğiniz (Advertising ID) yalnızca AdMob ile, reklam gösterimi ve dolandırıcılık önleme amacıyla paylaşılır. ParkEt Plus'a abone olduğunuzda bu paylaşım tamamen durur.</div>
+  </section>
+
+  <section class="card" id="s7">
+    <h2><span class="num">07</span> Saklama süresi ve hesap silme</h2>
+    <ul>
+      <li><strong>Hesap ve puan verisi:</strong> hesabınız aktif olduğu sürece saklanır; hesap silme talebinizden sonra en geç 90 gün içinde kalıcı olarak silinir.</li>
+      <li><strong>ParkEt Plus konum kaydı (yakın bildirim için):</strong> en fazla 2 saat saklanır, saatlik otomatik temizlikle silinir; abonelik bittiğinde veya oturum kapatıldığında anında silinir.</li>
+      <li><strong>Bildirim jetonu (FCM):</strong> oturum kapatıldığında veya token geçersiz hale geldiğinde silinir.</li>
+    </ul>
+    <h3>Hesabınızı ve verilerinizi nasıl sildirebilirsiniz</h3>
+    <p>Uygulamayı açmanıza gerek olmadan, bu sayfadan doğrudan talep gönderebilirsiniz: <a href="mailto:mert.ismet.ozel@gmail.com?subject=ParkEt%20hesap%20silme%20talebi&amp;body=Hesab%C4%B1m%C4%B1n%20ve%20t%C3%BCm%20verilerimin%20silinmesini%20talep%20ediyorum.%0A%0AKay%C4%B1tl%C4%B1%20e-posta%3A%20">mert.ismet.ozel@gmail.com</a> adresine, ParkEt'e kayıtlı e-posta adresinizden "hesap silme talebi" konulu bir e-posta göndermeniz yeterlidir.</p>
+    <p>Talebiniz alındıktan sonra en geç <strong>90 gün</strong> içinde işleme alınır ve şu veriler kalıcı olarak silinir: hesap bilgileriniz, araç bilgisi, konum kayıtları, puan/rozet geçmişi, bildirim jetonu ve abonelik bağlantı bilgisi. Yasal saklama yükümlülüğü bulunan işlem kayıtları (ör. fatura/muhasebe kaydı gerektiren ödeme bilgileri, Google Play üzerinden tutulur) ilgili mevzuatın öngördüğü süre kadar ayrıca saklanabilir.</p>
+  </section>
+
+  <section class="card" id="s8">
+    <h2><span class="num">08</span> Güvenlik</h2>
+    <p>Verileriniz, satır düzeyinde erişim denetimi (Row Level Security) uygulayan bir veritabanında tutulur — bir kullanıcı yalnızca kendi verisine erişebilir, ayrıcalıklı işlemler (puan verme, konum yazma, abonelik doğrulama) sunucu tarafında ayrıca zorunlu kılınır ve istemci uygulamanın beyanına güvenilmez. Bağlantılar şifrelenir (HTTPS/TLS). Buna rağmen internet üzerinden hiçbir aktarım yöntemi %100 güvenli değildir.</p>
+  </section>
+
+  <section class="card" id="s9">
+    <h2><span class="num">09</span> Haklarınız (KVKK / GDPR)</h2>
+    <p>Türkiye'de 6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) ve — Avrupa Ekonomik Alanı/Birleşik Krallık kullanıcıları için — Genel Veri Koruma Tüzüğü (GDPR) kapsamında şu haklara sahipsiniz:</p>
+    <ul>
+      <li>Hangi kişisel verilerinizin işlendiğini öğrenme</li>
+      <li>Verilerinize erişim ve bir kopyasını isteme</li>
+      <li>Yanlış/eksik verilerin düzeltilmesini isteme</li>
+      <li>Verilerinizin silinmesini isteme ("unutulma hakkı")</li>
+      <li>İşlemeye itiraz etme veya rızanızı geri çekme</li>
+    </ul>
+    <p>Bu haklarınızı kullanmak için <a href="#s11">11. İletişim</a> bölümündeki adresten bize ulaşabilirsiniz; talebinizi makul bir süre içinde yanıtlarız.</p>
+  </section>
+
+  <section class="card" id="s10">
+    <h2><span class="num">10</span> Çocukların gizliliği</h2>
+    <p>ParkEt, 13 yaşın altındaki çocuklara yönelik değildir ve bu yaş grubundan bilerek veri toplamayız. 13 yaşın altındaki bir çocuğun bize veri sağladığını fark edersek bu veriyi sileriz.</p>
+  </section>
+
+  <section class="card" id="s11">
+    <h2><span class="num">11</span> Değişiklikler ve iletişim</h2>
+    <p>Bu politikayı, uygulamaya yeni özellik eklendikçe veya yasal gereklilikler değiştikçe güncelleyebiliriz. Önemli değişikliklerde yürürlük tarihini güncelleriz; büyük değişikliklerde uygulama içinden ayrıca bilgilendirme yapmaya çalışırız.</p>
+    <p>Sorularınız, talepleriniz veya geri bildirimleriniz için: <a href="mailto:mert.ismet.ozel@gmail.com">mert.ismet.ozel@gmail.com</a></p>
+  </section>
+
+  <footer>
+    ParkEt — crowdsourced park yeri bulma ve paylaşma uygulaması · Son güncelleme 17.09.2026
+  </footer>
+
+</div>
