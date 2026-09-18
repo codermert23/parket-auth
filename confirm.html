@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ParkEt - Email Onayi</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0d1f14; min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .card {
+      background: #152a1e; border: 1px solid #2a4a35;
+      border-radius: 20px; padding: 36px 32px;
+      width: 100%; max-width: 400px; text-align: center;
+    }
+    .icon { font-size: 48px; margin-bottom: 12px; }
+    h2 { color: #4ade80; font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+    .sub { color: #6b8f79; font-size: 14px; line-height: 1.5; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+<div class="card">
+
+  <div id="s-ok">
+    <div class="icon">&#9989;</div>
+    <h2>Email Onaylandi</h2>
+    <p class="sub">Hesabin onaylandi. Simdi uygulamaya donup giris yapabilirsin.</p>
+  </div>
+
+  <div id="s-err" class="hidden">
+    <div class="icon">&#9888;</div>
+    <h2>Link Gecersiz</h2>
+    <p class="sub">Link suresi dolmus veya daha once kullanilmis.<br>Uygulamadan tekrar kayit denemesi yaparak yeni bir onay maili alabilirsin.</p>
+  </div>
+
+</div>
+<script>
+  // Supabase, dogrulamayi kendi sunucusunda yapip bizi buraya yonlendirir —
+  // basarisizsa URL'e hash/query icinde error= eklenir, biz sadece onu okuyup
+  // dogru karti gosteriyoruz (baska hicbir islem gerekmiyor).
+  var hasError = /[?&#]error=/.test(window.location.hash) ||
+                 /[?&]error=/.test(window.location.search);
+  if (hasError) {
+    document.getElementById('s-ok').classList.add('hidden');
+    document.getElementById('s-err').classList.remove('hidden');
+  }
+</script>
+</body>
+</html>

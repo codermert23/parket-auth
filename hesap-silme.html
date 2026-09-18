@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ParkEt Hesap Silme</title>
+<style>
+  :root{
+    --bg:#F6F8F3; --surface:#FFFFFF; --surface-2:#EEF3EC;
+    --text:#152318; --text-muted:#57685A; --border:#DEE6DB;
+    --accent:#1E8449; --accent-soft:#E5F4EA;
+    --gold:#8A6D1A; --gold-soft:#FBF3DC; --red:#C0392B;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0D1F0F; --surface:#152717; --surface-2:#1E3320;
+      --text:#ECF0F1; --text-muted:#B9C6BA; --border:#2C4A2E;
+      --accent:#3FD07E; --accent-soft:#1E3320;
+      --gold:#F4D03F; --gold-soft:#2A2412; --red:#F1948A;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0D1F0F; --surface:#152717; --surface-2:#1E3320;
+    --text:#ECF0F1; --text-muted:#B9C6BA; --border:#2C4A2E;
+    --accent:#3FD07E; --accent-soft:#1E3320;
+    --gold:#F4D03F; --gold-soft:#2A2412; --red:#F1948A;
+  }
+  * { box-sizing: border-box; }
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:"Source Serif 4", Georgia, "Times New Roman", serif;
+    line-height:1.65; padding-inline:16px; padding-block:32px;
+  }
+  h1,h2,h3,.eyebrow,.pill,.mono{
+    font-family:"Manrope", "Segoe UI", system-ui, sans-serif;
+  }
+  .mono{ font-family:"JetBrains Mono", ui-monospace, Consolas, monospace; }
+  .page{ max-width:640px; margin-inline:auto; }
+  header.hero{
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:18px; padding:28px 28px 24px; margin-bottom:22px;
+  }
+  .eyebrow{
+    display:flex; align-items:center; gap:10px;
+    font-size:13px; font-weight:700; letter-spacing:.06em;
+    text-transform:uppercase; color:var(--accent); margin-bottom:14px;
+  }
+  .eyebrow .dot{ width:8px;height:8px;border-radius:50%; background:var(--accent); flex:none; }
+  h1{ font-size:clamp(26px,5vw,34px); font-weight:800; letter-spacing:-0.01em; margin:0 0 10px; }
+  .lede{ color:var(--text-muted); font-size:16px; max-width:58ch; margin:0; }
+  section.card{
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:16px; padding:26px 28px; margin-bottom:16px;
+  }
+  section.card h2{
+    display:flex; align-items:baseline; gap:10px;
+    font-size:19px; font-weight:800; margin:0 0 12px; color:var(--text);
+  }
+  section.card h2 .num{ color:var(--accent); font-size:14px; font-variant-numeric:tabular-nums; }
+  section.card p{ margin:0 0 12px; }
+  section.card p:last-child{ margin-bottom:0; }
+  section.card ul{ margin:0 0 12px; padding-left:20px; }
+  section.card li{ margin-bottom:6px; }
+  section.card a{ color:var(--accent); font-weight:700; }
+  .note{
+    background:var(--accent-soft); border:1px solid var(--border);
+    border-left:3px solid var(--accent); border-radius:10px;
+    padding:12px 14px; font-size:14px; color:var(--text); margin:14px 0;
+  }
+  .note.warn{ background:var(--gold-soft); border-left-color:var(--gold); }
+  .btn{
+    display:inline-block; background:var(--accent); color:#fff !important;
+    font-weight:700; text-decoration:none; padding:12px 20px;
+    border-radius:12px; margin-top:6px;
+  }
+  footer{
+    text-align:center; color:var(--text-muted);
+    font-family:"Manrope", sans-serif; font-size:12.5px; padding:26px 8px 8px;
+  }
+  footer a{ color:var(--accent); }
+  @media (max-width: 480px){
+    section.card{ padding:20px; }
+    header.hero{ padding:22px 20px; }
+  }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@500&display=swap">
+</head>
+<body>
+<div class="page">
+
+  <header class="hero">
+    <div class="eyebrow"><span class="dot"></span> Hesap Silme</div>
+    <h1>ParkEt hesabini ve verilerini sil</h1>
+    <p class="lede">Hesabini iki yoldan biriyle kalici olarak silebilirsin. Ikisi de ayni sonuca goturur: profilin, aracin, puanlarin ve tum gecmisin kalici olarak kaldirilir.</p>
+  </header>
+
+  <section class="card">
+    <h2><span class="num">01</span> Uygulama icinden (aninda, onerilen)</h2>
+    <p>ParkEt uygulamasinda: <strong>Profil &gt; Ayarlar &gt; Tehlikeli Bolge &gt; "Hesabimi Sil"</strong> butonuna dokun, acilan kutuya <strong>"SIL"</strong> yaz ve onayla (sifreni de girmen istenir). Hesabin ve tum verilerin o an ANINDA kalici olarak silinir.</p>
+  </section>
+
+  <section class="card">
+    <h2><span class="num">02</span> Uygulamaya erisimin yoksa</h2>
+    <p>Telefonun elinde degilse veya uygulamayi silmişsen, asagidaki butona tiklayip ParkEt'e kayitli e-posta adresinden gonder — baska bir sey yapmana gerek yok:</p>
+    <a class="btn" href="mailto:mert.ismet.ozel@gmail.com?subject=ParkEt%20hesap%20silme%20talebi&amp;body=Hesab%C4%B1m%C4%B1n%20ve%20t%C3%BCm%20verilerimin%20silinmesini%20talep%20ediyorum.%0A%0AKay%C4%B1tl%C4%B1%20e-posta%3A%20">Silme Talebi Gonder</a>
+    <p style="margin-top:14px">Talebin en gec <strong>90 gun</strong> icinde islenir.</p>
+  </section>
+
+  <section class="card">
+    <h2><span class="num">03</span> Neler silinir?</h2>
+    <ul>
+      <li>Hesap ve profil bilgilerin (ad, kullanici adi, telefon, sehir, dogum tarihi)</li>
+      <li>Arac bilgilerin (marka, model, renk, plaka)</li>
+      <li>Puan / rozet gecmisin</li>
+      <li>Konum kayitlarin (ParkEt Plus yakin bildirim verisi)</li>
+      <li>Abonelik baglanti bilgin</li>
+      <li>Bildirim jetonun (FCM)</li>
+    </ul>
+    <div class="note warn">Yasal saklama yukumlulugu bulunan islem kayitlari (or. fatura/muhasebe kaydi gerektiren odeme bilgileri, Google Play uzerinden tutulur) ilgili mevzuatin ongordugu sure kadar ayrica saklanabilir.</div>
+  </section>
+
+  <footer>
+    Sorularin icin: <a href="mailto:mert.ismet.ozel@gmail.com">mert.ismet.ozel@gmail.com</a> ·
+    <a href="/privacy.html">Gizlilik Politikasi</a>
+  </footer>
+
+</div>
+</body>
+</html>
