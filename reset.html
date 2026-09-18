@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ParkEt - Sifre Sifirla</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0d1f14; min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .card {
+      background: #152a1e; border: 1px solid #2a4a35;
+      border-radius: 20px; padding: 36px 32px;
+      width: 100%; max-width: 400px; text-align: center;
+    }
+    .icon { font-size: 48px; margin-bottom: 12px; }
+    h2 { color: #4ade80; font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+    .sub { color: #6b8f79; font-size: 14px; margin-bottom: 24px; line-height: 1.5; }
+    label {
+      display: block; text-align: left;
+      color: #8ab59a; font-size: 12px; font-weight: 600; margin-bottom: 6px;
+    }
+    input {
+      width: 100%; padding: 13px 14px; background: #1e3a28;
+      border: 1px solid #2a4a35; border-radius: 12px;
+      color: #e8f5e9; font-size: 14px; outline: none;
+      margin-bottom: 16px; transition: border-color 0.2s;
+    }
+    input:focus { border-color: #4ade80; }
+    .err { color: #f87171; font-size: 12px; margin-bottom: 12px; text-align: left; min-height: 16px; }
+    button {
+      width: 100%; padding: 14px;
+      background: linear-gradient(135deg, #4ade80, #22c55e);
+      color: #0d1f14; font-size: 15px; font-weight: 700;
+      border: none; border-radius: 14px; cursor: pointer;
+    }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .spinner {
+      width: 36px; height: 36px; border: 3px solid #2a4a35;
+      border-top-color: #4ade80; border-radius: 50%;
+      animation: spin 0.8s linear infinite; margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+<div class="card">
+
+  <div id="s-load">
+    <div class="spinner"></div>
+    <p class="sub">Dogrulanıyor...</p>
+  </div>
+
+  <div id="s-form" class="hidden">
+    <div class="icon">&#128273;</div>
+    <h2>Yeni Sifre Belirle</h2>
+    <p class="sub">Hesabın icin yeni bir sifre olustur.</p>
+    <label>Yeni Sifre</label>
+    <input type="password" id="p1" placeholder="minimum 6 karakter"/>
+    <label>Sifre Tekrar</label>
+    <input type="password" id="p2" placeholder="sifrenizi tekrar girin"/>
+    <p class="err" id="ferr"></p>
+    <button id="btn" onclick="savePass()">Sifreyi Guncelle</button>
+  </div>
+
+  <div id="s-ok" class="hidden">
+    <div class="icon">&#9989;</div>
+    <h2>Sifre Guncellendi</h2>
+    <p class="sub">Yeni sifrenle uygulamaya giris yapabilirsin.</p>
+  </div>
+
+  <div id="s-err" class="hidden">
+    <div class="icon">&#9888;</div>
+    <h2>Link Gecersiz</h2>
+    <p class="sub">Link suresi dolmus veya gecersiz.<br>Uygulamadan tekrar talep oluştur.</p>
+  </div>
+
+</div>
+<script>
+  var URL  = 'https://fnjrllimqrlprxoifevz.supabase.co';
+  var ANON = 'sb_publishable_e6KSlqqjma2stp2v2bHRIQ_aW3drTGx';
+  var db = supabase.createClient(URL, ANON, {
+  auth: { flowType: 'implicit' }
+  });
+  var done = false;
+
+  function show(id) {
+    var ids = ['s-load', 's-form', 's-ok', 's-err'];
+    for (var i = 0; i < ids.length; i++) {
+      var el = document.getElementById(ids[i]);
+      if (ids[i] === id) { el.classList.remove('hidden'); }
+      else               { el.classList.add('hidden');    }
+    }
+  }
+
+  function savePass() {
+    var p1  = document.getElementById('p1').value;
+    var p2  = document.getElementById('p2').value;
+    var err = document.getElementById('ferr');
+    var btn = document.getElementById('btn');
+    err.textContent = '';
+    if (p1.length < 6) { err.textContent = 'Sifre en az 6 karakter olmali.'; return; }
+    if (p1 !== p2)     { err.textContent = 'Sifreler eslesmiyor.';            return; }
+    btn.disabled = true;
+    btn.textContent = 'Guncelleniyor...';
+    db.auth.updateUser({ password: p1 }).then(function(res) {
+      if (res.error) {
+        err.textContent = 'Hata: ' + res.error.message;
+        btn.disabled = false;
+        btn.textContent = 'Sifreyi Guncelle';
+      } else {
+        show('s-ok');
+      }
+    });
+  }
+
+  db.auth.onAuthStateChange(function(event, session) {
+    if (done) { return; }
+    if (event === 'PASSWORD_RECOVERY') { done = true; show('s-form'); return; }
+    if (event === 'SIGNED_IN'         && session) { done = true; show('s-form'); return; }
+    if (event === 'INITIAL_SESSION'   && session) { done = true; show('s-form'); return; }
+  });
+
+  setTimeout(function() {
+    if (done) { return; }
+    db.auth.getSession().then(function(res) {
+      done = true;
+      if (res.data && res.data.session) { show('s-form'); }
+      else                              { show('s-err');  }
+    });
+  }, 10000);
+</script>
+</body>
+</html>
