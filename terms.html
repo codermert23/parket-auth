@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ParkEt Kullanım Koşulları</title>
+<meta name="description" content="ParkEt mobil uygulaması ve ParkEt Plus aboneliği kullanım koşulları."/>
+<style>
+  :root{
+    --bg:#F6F8F3;
+    --surface:#FFFFFF;
+    --surface-2:#EEF3EC;
+    --text:#152318;
+    --text-muted:#57685A;
+    --border:#DEE6DB;
+    --accent:#1E8449;
+    --accent-soft:#E5F4EA;
+    --gold:#8A6D1A;
+    --gold-soft:#FBF3DC;
+    --red:#C0392B;
+    --code-bg:#F0F0EC;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0D1F0F;
+      --surface:#152717;
+      --surface-2:#1E3320;
+      --text:#ECF0F1;
+      --text-muted:#B9C6BA;
+      --border:#2C4A2E;
+      --accent:#3FD07E;
+      --accent-soft:#1E3320;
+      --gold:#F4D03F;
+      --gold-soft:#2A2412;
+      --red:#F1948A;
+      --code-bg:#0F1F10;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0D1F0F;
+    --surface:#152717;
+    --surface-2:#1E3320;
+    --text:#ECF0F1;
+    --text-muted:#B9C6BA;
+    --border:#2C4A2E;
+    --accent:#3FD07E;
+    --accent-soft:#1E3320;
+    --gold:#F4D03F;
+    --gold-soft:#2A2412;
+    --red:#F1948A;
+    --code-bg:#0F1F10;
+  }
+
+  * { box-sizing: border-box; }
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Source Serif 4", Georgia, "Times New Roman", serif;
+    line-height:1.65;
+    padding-inline:16px;
+    padding-block:32px;
+  }
+  h1,h2,h3,.eyebrow,nav,.pill,.meta,code,.tocnum{
+    font-family:"Manrope", "Segoe UI", system-ui, sans-serif;
+  }
+  .mono{ font-family:"JetBrains Mono", ui-monospace, Consolas, monospace; }
+
+  .page{
+    max-width:760px;
+    margin-inline:auto;
+  }
+
+  header.hero{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:28px 28px 24px;
+    margin-bottom:22px;
+  }
+  .eyebrow{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin-bottom:14px;
+  }
+  .eyebrow .dot{
+    width:8px;height:8px;border-radius:50%;
+    background:var(--accent);
+    flex:none;
+  }
+  h1{
+    font-size:clamp(28px,5vw,38px);
+    font-weight:800;
+    letter-spacing:-0.01em;
+    text-wrap:balance;
+    margin:0 0 10px;
+  }
+  .lede{
+    color:var(--text-muted);
+    font-size:16px;
+    max-width:58ch;
+    margin:0 0 18px;
+  }
+  .meta-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px 10px;
+  }
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--text);
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    border-radius:999px;
+    padding:6px 12px;
+  }
+  .pill b{ font-variant-numeric:tabular-nums; }
+
+  nav.toc{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:18px 20px;
+    margin-bottom:26px;
+  }
+  nav.toc .toc-title{
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--text-muted);
+    margin-bottom:10px;
+  }
+  nav.toc ol{
+    columns:2;
+    column-gap:20px;
+    margin:0;
+    padding:0;
+    list-style:none;
+    counter-reset:toc;
+  }
+  nav.toc li{
+    counter-increment:toc;
+    break-inside:avoid;
+    margin-bottom:7px;
+  }
+  nav.toc a{
+    display:flex;
+    gap:8px;
+    color:var(--text);
+    text-decoration:none;
+    font-size:13.5px;
+    font-weight:600;
+  }
+  nav.toc a:hover{ color:var(--accent); }
+  nav.toc .tocnum{
+    color:var(--accent);
+    font-variant-numeric:tabular-nums;
+    flex:none;
+  }
+
+  section.card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:26px 28px;
+    margin-bottom:16px;
+    scroll-margin-top:16px;
+  }
+  section.card h2{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    font-size:20px;
+    font-weight:800;
+    margin:0 0 12px;
+    color:var(--text);
+  }
+  section.card h2 .num{
+    color:var(--accent);
+    font-size:14px;
+    font-variant-numeric:tabular-nums;
+  }
+  section.card h3{
+    font-size:15px;
+    font-weight:700;
+    margin:18px 0 6px;
+  }
+  section.card p{ margin:0 0 12px; }
+  section.card p:last-child{ margin-bottom:0; }
+  section.card ul{ margin:0 0 12px; padding-left:20px; }
+  section.card li{ margin-bottom:6px; }
+  section.card li:last-child{ margin-bottom:0; }
+  section.card a{ color:var(--accent); }
+
+  .note{
+    background:var(--accent-soft);
+    border:1px solid var(--border);
+    border-left:3px solid var(--accent);
+    border-radius:10px;
+    padding:12px 14px;
+    font-size:14px;
+    color:var(--text);
+    margin:14px 0;
+  }
+  .note.warn{
+    background:var(--gold-soft);
+    border-left-color:var(--gold);
+  }
+
+  .table-wrap{ overflow-x:auto; margin:14px 0; }
+  table{
+    width:100%;
+    min-width:560px;
+    border-collapse:collapse;
+    font-family:"Manrope", sans-serif;
+    font-size:13.5px;
+  }
+  th,td{
+    text-align:left;
+    padding:10px 12px;
+    border-bottom:1px solid var(--border);
+    vertical-align:top;
+  }
+  thead th{
+    color:var(--text-muted);
+    font-size:11.5px;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    font-weight:700;
+    border-bottom:1px solid var(--border);
+  }
+  tbody tr:last-child td{ border-bottom:none; }
+  td.cat{ font-weight:700; white-space:nowrap; }
+  code.mono{
+    background:var(--code-bg);
+    border:1px solid var(--border);
+    border-radius:5px;
+    padding:1px 6px;
+    font-size:12.5px;
+  }
+
+  .badge{
+    display:inline-block;
+    font-family:"Manrope", sans-serif;
+    font-size:11px;
+    font-weight:700;
+    padding:2px 8px;
+    border-radius:999px;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    color:var(--text-muted);
+  }
+  .badge.plus{ background:var(--gold-soft); color:var(--gold); border-color:var(--gold); }
+
+  footer{
+    text-align:center;
+    color:var(--text-muted);
+    font-family:"Manrope", sans-serif;
+    font-size:12.5px;
+    padding:26px 8px 8px;
+  }
+  footer a{ color:var(--accent); }
+
+  @media (max-width: 480px){
+    nav.toc ol{ columns:1; }
+    section.card{ padding:20px; }
+    header.hero{ padding:22px 20px; }
+  }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@500&display=swap">
+</head>
+<body>
+<div class="page">
+
+  <header class="hero">
+    <div class="eyebrow"><span class="dot"></span> Kullanım Koşulları</div>
+    <h1>ParkEt'i kullanırken geçerli kurallar</h1>
+    <p class="lede">Bu koşullar ParkEt mobil uygulamasını ve ParkEt Plus aboneliğini kullanımınızı düzenler. Uygulamaya kayıt olarak veya uygulamayı kullanarak bu koşulları kabul etmiş olursunuz.</p>
+    <div class="meta-row">
+      <span class="pill">Yürürlük tarihi <b class="mono">30.09.2026</b></span>
+      <span class="pill">Uygulama <b>ParkEt</b> · <span class="mono">com.codermert.parket</span></span>
+      <span class="pill">İletişim <b class="mono">mert.ismet.ozel@gmail.com</b></span>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="İçindekiler">
+    <div class="toc-title">Bölümler</div>
+    <ol>
+      <li><a href="#s1"><span class="tocnum">01</span> Taraflar ve kabul</a></li>
+      <li><a href="#s2"><span class="tocnum">02</span> Hizmetin tanımı</a></li>
+      <li><a href="#s3"><span class="tocnum">03</span> Hesap ve yaş şartı</a></li>
+      <li><a href="#s4"><span class="tocnum">04</span> Güvenli kullanım ve trafik</a></li>
+      <li><a href="#s5"><span class="tocnum">05</span> Çıkış bildirimi ve rezervasyon</a></li>
+      <li><a href="#s6"><span class="tocnum">06</span> ParkPuan</a></li>
+      <li><a href="#s7"><span class="tocnum">07</span> ParkEt Plus aboneliği</a></li>
+      <li><a href="#s8"><span class="tocnum">08</span> Reklamlar</a></li>
+      <li><a href="#s9"><span class="tocnum">09</span> Yasak davranışlar</a></li>
+      <li><a href="#s10"><span class="tocnum">10</span> Sorumluluğun sınırı</a></li>
+      <li><a href="#s11"><span class="tocnum">11</span> Askıya alma ve hesap silme</a></li>
+      <li><a href="#s12"><span class="tocnum">12</span> Değişiklikler, hukuk ve iletişim</a></li>
+    </ol>
+  </nav>
+
+  <section class="card" id="s1">
+    <h2><span class="num">01</span> Taraflar ve kabul</h2>
+    <p>ParkEt, bağımsız bir geliştirici tarafından sunulan bir mobil uygulamadır (tüzel bir şirket değildir). Bu sayfada "ParkEt" ve "biz" ifadeleri uygulamayı ve geliştiricisini, "siz" ifadesi ise uygulamayı kullanan kişiyi ifade eder.</p>
+    <p>Kişisel verilerinizin nasıl işlendiği ayrı bir belgede, <a href="/privacy.html">Gizlilik Politikası</a>'nda anlatılır. Gizlilik Politikası bu koşulların ayrılmaz bir parçasıdır.</p>
+  </section>
+
+  <section class="card" id="s2">
+    <h2><span class="num">02</span> Hizmetin tanımı</h2>
+    <p>ParkEt, sürücülerin boşaltmak üzere oldukları park yerlerini haritada paylaştığı, başka sürücülerin de bu yerleri görüp ayırtabildiği topluluk temelli bir uygulamadır.</p>
+    <ul>
+      <li>ParkEt bir otopark işletmecisi <strong>değildir</strong>. Park yerlerinin sahibi, kiraya vereni veya yöneticisi değildir; park yeri satmaz veya kiralamaz.</li>
+      <li>Haritadaki bilgiler kullanıcılar tarafından oluşturulur. Bir yerin gerçekten boşalacağı, park etmeye uygun ya da yasal olduğu garanti edilmez.</li>
+      <li>Hizmet "olduğu gibi" sunulur. Kesintisiz veya hatasız çalışacağı taahhüt edilmez. Bakım, güncelleme veya teknik sorunlar nedeniyle geçici kesintiler olabilir.</li>
+    </ul>
+  </section>
+
+  <section class="card" id="s3">
+    <h2><span class="num">03</span> Hesap ve yaş şartı</h2>
+    <ul>
+      <li>ParkEt'i kullanmak için <strong>18 yaşını doldurmuş</strong> olmanız ve bir hesap oluşturmanız gerekir.</li>
+      <li>Kayıtta verdiğiniz bilgilerin (ad, e-posta, araç bilgisi) doğru ve güncel olmasından siz sorumlusunuz.</li>
+      <li>Hesabınızın ve şifrenizin güvenliğinden siz sorumlusunuz. Hesabınızın izinsiz kullanıldığını düşünüyorsanız bize hemen haber verin.</li>
+      <li>Bir kişi yalnızca bir hesap kullanabilir. Hesaplar devredilemez ve satılamaz.</li>
+    </ul>
+  </section>
+
+  <section class="card" id="s4">
+    <h2><span class="num">04</span> Güvenli kullanım ve trafik</h2>
+    <div class="note warn"><strong>Araç kullanırken uygulamayı elinize almayın.</strong> Bildirim göndermek, yer ayırtmak veya mesaj yazmak için güvenli bir şekilde durmuş olmanız gerekir.</div>
+    <ul>
+      <li>Trafik kurallarına, park yasaklarına ve yerel düzenlemelere uymak her zaman sizin sorumluluğunuzdur. Uygulamada görünen bir yer, oraya park etmenin yasal olduğu anlamına gelmez.</li>
+      <li>Park cezaları, çekici ücretleri, otopark ücretleri ve kazalardan ParkEt sorumlu değildir.</li>
+      <li>Diğer sürücülerle karşılaştığınızda saygılı olun. Bir park yeri için tartışmaya veya tehlikeli manevralara girmeyin.</li>
+    </ul>
+  </section>
+
+  <section class="card" id="s5">
+    <h2><span class="num">05</span> Çıkış bildirimi ve rezervasyon</h2>
+    <h3>Yerini bırakan sürücü</h3>
+    <ul>
+      <li>Çıkış bildirimi gönderdiğinizde, seçtiğiniz süre boyunca aracınızla yerinizde beklemeyi ve süre dolduğunda yeri boşaltmayı kabul edersiniz.</li>
+      <li>Süre dolduğunda uygulama, aracın gerçekten hareket ettiğini kısa bir konum kontrolüyle doğrular. Bildirim yapıp yeri boşaltmamak veya süre yarılanmadan ayrılmak ParkPuan cezasına yol açabilir.</li>
+      <li>Süreyi bir kez, 2 dakika uzatabilirsiniz.</li>
+    </ul>
+    <h3>Yer ayırtan sürücü</h3>
+    <ul>
+      <li>Bir yeri ayırttığınızda depozito olarak ParkPuan ayrılır. Belirttiğiniz sürede (üzerine 3 dakikalık tolerans) gelip "Parkı Aldım" ile onaylamanız beklenir.</li>
+      <li>Varış sürenizi bir kez, 2 dakika uzatabilirsiniz. Süresi içinde gelmezseniz rezervasyon otomatik olarak iptal edilir.</li>
+      <li>Karşı tarafın kusuru olduğunda (ör. bırakan sürücü beklemeden ayrılırsa veya rezervasyonu reddederse) depozitonuz iade edilir.</li>
+    </ul>
+    <p>Rezervasyon, park yeri üzerinde hukuki bir hak doğurmaz; yalnızca kullanıcılar arasında bir nezaket ve güven düzenidir.</p>
+  </section>
+
+  <section class="card" id="s6">
+    <h2><span class="num">06</span> ParkPuan</h2>
+    <ul>
+      <li>ParkPuan, uygulama içi bir teşvik ve güven puanıdır. <strong>Parasal değeri yoktur</strong>; nakde çevrilemez, satılamaz, başka bir hesaba aktarılamaz ve iade edilmez.</li>
+      <li>Kayıtta başlangıç puanı verilir. Çıkış bildirimi göndermek puan kazandırır (kötüye kullanımı önlemek için saatlik bir sınır vardır). Ayırtma depozitosu ve cezalar puan düşürür. Güncel değerler uygulamada gösterilir.</li>
+      <li>Hatayla veya kötüye kullanım yoluyla kazanılmış puanları düzeltme ya da geri alma hakkımız saklıdır.</li>
+      <li>Puan kuralları, sistemin dengesini korumak için değiştirilebilir. Önemli değişiklikler uygulama içinden duyurulur.</li>
+    </ul>
+  </section>
+
+  <section class="card" id="s7">
+    <h2><span class="num">07</span> ParkEt Plus aboneliği <span class="badge plus">Plus</span></h2>
+    <p>ParkEt Plus isteğe bağlı, ücretli bir aboneliktir. Uygulamanın temel özellikleri abonelik olmadan da kullanılabilir.</p>
+    <h3>Ne sunar</h3>
+    <ul>
+      <li>Reklamsız kullanım</li>
+      <li>Her ay +50 ParkPuan. İlk ücretli dönemden itibaren verilir, ücretsiz deneme süresinde verilmez.</li>
+      <li>Daha geniş tarama yarıçapı (2 km)</li>
+      <li>Yakınınızda yeni bir park yeri paylaşıldığında bildirim</li>
+    </ul>
+    <h3>Ödeme, deneme ve otomatik yenileme</h3>
+    <ul>
+      <li>Abonelik aylık veya yıllık olarak sunulur. Güncel fiyatlar satın alma ekranında ve Google Play'de gösterilir. Satın alma ve ödeme tamamen <strong>Google Play</strong> üzerinden yapılır; ParkEt kart bilgilerinizi görmez.</li>
+      <li>Daha önce abone olmamış hesaplara <strong>7 günlük ücretsiz deneme</strong> sunulabilir. Deneme bitmeden iptal etmezseniz, deneme sonunda seçtiğiniz planın ücreti alınır.</li>
+      <li>Abonelik, siz iptal edene kadar her dönemin sonunda <strong>otomatik olarak yenilenir</strong> ve ücret Google Play hesabınıza yansıtılır.</li>
+      <li>Fiyat değişikliklerinde Google Play kurallarına uygun olarak önceden bilgilendirilirsiniz.</li>
+    </ul>
+    <h3>İptal ve iade</h3>
+    <ul>
+      <li>İstediğiniz zaman iptal edebilirsiniz: Google Play Store → profil simgesi → <strong>Ödemeler ve abonelikler</strong> → <strong>Abonelikler</strong> → ParkEt Plus → <strong>Aboneliği iptal et</strong>. Uygulamadaki "Aboneliği yönet" bağlantısı da sizi aynı sayfaya götürür.</li>
+      <li>İptal ettiğinizde Plus ayrıcalıklarınız, ödemesi yapılmış dönemin sonuna kadar devam eder. Sonraki dönem için ücret alınmaz.</li>
+      <li>İade talepleri <a href="https://support.google.com/googleplay/answer/2479637?hl=tr" target="_blank" rel="noopener">Google Play iade politikalarına</a> tabidir. Yürürlükteki tüketici mevzuatından doğan haklarınız saklıdır.</li>
+    </ul>
+    <div class="note warn"><strong>Uygulamayı kaldırmak veya ParkEt hesabınızı silmek aboneliğinizi iptal etmez.</strong> Ücretlendirmenin durması için aboneliği Google Play'den ayrıca iptal etmeniz gerekir.</div>
+    <p>Telefon değiştirdiğinizde veya uygulamayı yeniden yüklediğinizde, aynı Google hesabıyla satın alma ekranındaki "Satın alımları geri yükle" seçeneğini kullanabilirsiniz.</p>
+  </section>
+
+  <section class="card" id="s8">
+    <h2><span class="num">08</span> Reklamlar</h2>
+    <p>Ücretsiz kullanımda uygulama içinde reklam gösterilir (ör. günün ilk profil açılışında ve bir çıkış bildiriminden önce). ParkEt Plus aboneleri reklam görmez. Reklamların içeriğinden ilgili reklam verenler sorumludur. Reklamlarla ilgili veri işleme <a href="/privacy.html#s6">Gizlilik Politikası</a>'nda anlatılmıştır.</p>
+  </section>
+
+  <section class="card" id="s9">
+    <h2><span class="num">09</span> Yasak davranışlar</h2>
+    <p>Aşağıdakiler yasaktır:</p>
+    <ul>
+      <li>Gerçekte boşaltmayacağınız bir yer için bildirim göndermek, sahte konum kullanmak veya konum bilgisini manipüle etmek</li>
+      <li>Birden fazla hesap açmak, puan toplamak için hesaplar arasında düzenek kurmak veya sistemi başka yollarla istismar etmek</li>
+      <li>Park yerlerini veya rezervasyonları para ya da başka bir karşılık için satmak</li>
+      <li>Diğer kullanıcıları taciz etmek, tehdit etmek veya hızlı mesajları kötüye kullanmak</li>
+      <li>Uygulamayı tersine mühendislikle incelemek, otomatik araçlarla (bot, script) kullanmak, sunuculara yetkisiz erişmeye veya aşırı yük bindirmeye çalışmak</li>
+      <li>Uygulamayı yasa dışı herhangi bir amaçla kullanmak</li>
+    </ul>
+  </section>
+
+  <section class="card" id="s10">
+    <h2><span class="num">10</span> Sorumluluğun sınırı</h2>
+    <p>Yürürlükteki mevzuatın izin verdiği ölçüde ParkEt şunlardan sorumlu tutulamaz: kullanıcıların paylaştığı bilgilerin yanlış olması, bir park yerinin bulunamaması, kullanıcılar arasındaki anlaşmazlıklar, park cezaları ve maddi hasarlar, hizmet kesintileri ve bunlardan doğan dolaylı zararlar. Kanunen sınırlandırılamayan sorumluluklar (ör. kast veya ağır ihmal) saklıdır.</p>
+  </section>
+
+  <section class="card" id="s11">
+    <h2><span class="num">11</span> Askıya alma ve hesap silme</h2>
+    <ul>
+      <li>Bu koşulları ihlal eden hesapları uyararak, ağır durumlarda ise uyarmadan kısıtlayabilir, askıya alabilir ya da kapatabiliriz. Bu durumda kalan ParkPuan için bir bedel ödenmez.</li>
+      <li>Hesabınızı istediğiniz zaman silebilirsiniz: uygulamada <strong>Ayarlar → Tehlikeli Bölge → Hesabımı Sil</strong>. Uygulamaya erişiminiz yoksa <a href="/hesap-silme.html">hesap silme sayfası</a>ndaki adımları izleyebilirsiniz.</li>
+      <li>Hesap silme geri alınamaz. Profiliniz, aracınız, puanlarınız ve geçmişiniz kalıcı olarak silinir. Aktif bir aboneliğiniz varsa Google Play'den ayrıca iptal etmeyi unutmayın (bkz. <a href="#s7">07</a>).</li>
+    </ul>
+  </section>
+
+  <section class="card" id="s12">
+    <h2><span class="num">12</span> Değişiklikler, hukuk ve iletişim</h2>
+    <p>Bu koşulları, uygulamaya yeni özellikler eklendikçe veya yasal gereklilikler değiştikçe güncelleyebiliriz. Güncel metin her zaman bu adreste yayımlanır ve yürürlük tarihi güncellenir. Önemli değişikliklerde uygulama içinden bilgilendirme yapmaya çalışırız. Değişiklikten sonra uygulamayı kullanmaya devam etmeniz, güncel koşulları kabul ettiğiniz anlamına gelir.</p>
+    <p>Bu koşullar Türkiye Cumhuriyeti hukukuna tabidir. Tüketici olarak kanundan doğan başvuru haklarınız (ör. Tüketici Hakem Heyetleri) saklıdır.</p>
+    <p>Sorularınız ve talepleriniz için: <a href="mailto:mert.ismet.ozel@gmail.com">mert.ismet.ozel@gmail.com</a></p>
+  </section>
+
+  <footer>
+    ParkEt · <a href="/">Anasayfa</a> · <a href="/privacy.html">Gizlilik Politikası</a> · <a href="/hesap-silme.html">Hesap Silme</a> · Son güncelleme 30.09.2026
+  </footer>
+
+</div>
+</body>
+</html>
