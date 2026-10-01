@@ -3,70 +3,698 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>ParkEt</title>
+<title>ParkEt — Boşalan park yeri, bekleyen sürücüye</title>
+<meta name="description" content="ParkEt: sürücülerin boşalan park yerlerini birbirine bildirdiği topluluk uygulaması."/>
+<meta name="theme-color" content="#030a06"/>
+<meta name="color-scheme" content="dark"/>
+<meta property="og:title" content="ParkEt"/>
+<meta property="og:description" content="Sürücülerin boşalan park yerlerini birbirine bildirdiği topluluk uygulaması."/>
+<meta property="og:image" content="https://auth.parketapp.org/assets/logo.png"/>
+<link rel="icon" type="image/png" href="assets/logo.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap"/>
 <style>
+  /* ============ TEMA ============ */
   :root{
-    --bg:#F6F8F3; --surface:#FFFFFF; --surface-2:#EEF3EC;
-    --text:#152318; --text-muted:#57685A; --border:#DEE6DB;
-    --accent:#1E8449; --accent-soft:#E5F4EA;
+    --bg:#030a06;          /* neredeyse siyah yeşil */
+    --bg-2:#06140c;
+    --surface:#0a1d12;
+    --neon:#39ff88;        /* ana neon yeşil */
+    --neon-2:#a6ff3d;      /* ikincil (logo pini tonu) */
+    --text:#f4fff8;
+    --muted:#9db8a6;
+    --line:rgba(57,255,136,.18);
+    --glow:0 0 24px rgba(57,255,136,.35);
+    --radius:18px;
+    --nav-h:64px;
+    color-scheme:dark;
   }
-  @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){
-      --bg:#0D1F0F; --surface:#152717; --surface-2:#1E3320;
-      --text:#ECF0F1; --text-muted:#B9C6BA; --border:#2C4A2E;
-      --accent:#3FD07E; --accent-soft:#1E3320;
-    }
-  }
-  :root[data-theme="dark"]{
-    --bg:#0D1F0F; --surface:#152717; --surface-2:#1E3320;
-    --text:#ECF0F1; --text-muted:#B9C6BA; --border:#2C4A2E;
-    --accent:#3FD07E; --accent-soft:#1E3320;
-  }
-  * { box-sizing: border-box; }
+  *,*::before,*::after{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
   body{
-    background:var(--bg); color:var(--text); margin:0;
-    font-family:"Manrope", "Segoe UI", system-ui, sans-serif;
-    min-height:100vh; display:flex; align-items:center; justify-content:center;
-    padding:24px;
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:"Manrope", system-ui, sans-serif; line-height:1.6;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
   }
-  .page{ max-width:480px; width:100%; text-align:center; }
-  .logo{
-    width:72px; height:72px; border-radius:20px;
-    background:var(--accent-soft); border:1px solid var(--border);
+  a{ color:inherit; }
+  img{ display:block; max-width:100%; }
+
+  /* Arka plan: sabit, hafif neon ışık + ince ızgara (tek katman, ucuz) */
+  .backdrop{
+    position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background:
+      radial-gradient(60vmax 40vmax at 80% -10%, rgba(57,255,136,.13), transparent 60%),
+      radial-gradient(50vmax 40vmax at -10% 60%, rgba(166,255,61,.07), transparent 60%),
+      linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 55%, var(--bg) 100%);
+  }
+  .backdrop::after{
+    content:""; position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(57,255,136,.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(57,255,136,.045) 1px, transparent 1px);
+    background-size:56px 56px;
+    mask-image:radial-gradient(ellipse at 50% 30%, #000 0%, transparent 70%);
+    -webkit-mask-image:radial-gradient(ellipse at 50% 30%, #000 0%, transparent 70%);
+  }
+
+  .wrap{ width:100%; max-width:1120px; margin:0 auto; padding:0 20px; }
+
+  /* ============ NAVBAR ============ */
+  .nav{
+    position:sticky; top:0; z-index:50; height:var(--nav-h);
+    background:rgba(3,10,6,.72);
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border-bottom:1px solid rgba(57,255,136,.08);
+  }
+  .nav .wrap{ height:100%; display:flex; align-items:center; justify-content:space-between; }
+  .brand{
+    display:flex; align-items:center; gap:10px; text-decoration:none;
+    font-family:"Sora", sans-serif; font-weight:800; font-size:22px; letter-spacing:-.02em;
+    text-shadow:0 0 18px rgba(57,255,136,.45);
+  }
+  .brand img{ width:32px; height:32px; border-radius:9px; box-shadow:0 0 0 1px var(--line); }
+  .accent{ color:var(--neon); }
+
+  .menu{ position:relative; }
+  .menu-btn{
+    display:flex; align-items:center; gap:10px; cursor:pointer;
+    height:42px; padding:0 14px; border-radius:12px;
+    background:rgba(10,29,18,.7); color:var(--text);
+    border:1px solid var(--line); font:600 14px "Manrope", sans-serif;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  .menu-btn:hover, .menu-btn[aria-expanded="true"]{ border-color:var(--neon); box-shadow:var(--glow); }
+  .menu-btn:focus-visible{ outline:2px solid var(--neon); outline-offset:2px; }
+  .bars{ width:18px; height:12px; position:relative; }
+  .bars span{
+    position:absolute; left:0; width:100%; height:2px; border-radius:2px; background:currentColor;
+    transition:transform .25s ease, opacity .2s ease, top .25s ease;
+  }
+  .bars span:nth-child(1){ top:0; } .bars span:nth-child(2){ top:5px; } .bars span:nth-child(3){ top:10px; }
+  .menu-btn[aria-expanded="true"] .bars span:nth-child(1){ top:5px; transform:rotate(45deg); }
+  .menu-btn[aria-expanded="true"] .bars span:nth-child(2){ opacity:0; }
+  .menu-btn[aria-expanded="true"] .bars span:nth-child(3){ top:5px; transform:rotate(-45deg); }
+
+  .dropdown{
+    position:absolute; right:0; top:calc(100% + 10px); min-width:240px;
+    padding:8px; margin:0; list-style:none;
+    background:rgba(4,14,8,.96); border:1px solid rgba(57,255,136,.45); border-radius:16px;
+    box-shadow:0 0 0 1px rgba(57,255,136,.06), 0 18px 50px rgba(0,0,0,.6), 0 0 30px rgba(57,255,136,.15);
+    opacity:0; visibility:hidden; transform:translateY(-6px) scale(.98); transform-origin:top right;
+    transition:opacity .2s ease, transform .2s ease, visibility 0s linear .2s;
+  }
+  .dropdown.open{ opacity:1; visibility:visible; transform:none; transition:opacity .2s ease, transform .2s ease; }
+  .dropdown a{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:12px 14px; border-radius:10px; text-decoration:none;
+    font-weight:600; font-size:15px; color:var(--text);
+    transition:background .15s, color .15s;
+  }
+  .dropdown a::after{ content:"→"; color:var(--neon); opacity:0; transform:translateX(-4px); transition:.15s; }
+  .dropdown a:hover, .dropdown a:focus-visible{ background:rgba(57,255,136,.09); color:var(--neon); outline:none; }
+  .dropdown a:hover::after, .dropdown a:focus-visible::after{ opacity:1; transform:none; }
+
+  /* ============ HERO ============ */
+  .hero{ padding:clamp(56px, 11vh, 120px) 0 28px; text-align:center; }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:6px 14px; border-radius:999px; margin-bottom:22px;
+    border:1px solid var(--line); background:rgba(57,255,136,.05);
+    font-size:13px; font-weight:600; color:var(--muted);
+  }
+  .eyebrow .dot{ width:7px; height:7px; border-radius:50%; background:var(--neon); box-shadow:0 0 10px var(--neon); animation:pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse{ 50%{ opacity:.35; } }
+  .hero h1{
+    margin:0; font-family:"Sora", sans-serif; font-weight:800;
+    font-size:clamp(56px, 13vw, 132px); line-height:.95; letter-spacing:-.045em;
+    text-shadow:0 0 40px rgba(57,255,136,.25);
+  }
+  .hero h1 .accent{ text-shadow:0 0 24px rgba(57,255,136,.6), 0 0 60px rgba(57,255,136,.3); }
+  .hero .lede{
+    max-width:620px; margin:24px auto 0; color:var(--muted); text-wrap:balance;
+    font-size:clamp(16px, 2.2vw, 19px);
+  }
+  .hero .lede b{ color:var(--text); font-weight:700; }
+  .scroll-hint{
+    display:inline-flex; flex-direction:column; align-items:center; gap:6px; margin-top:36px;
+    color:var(--muted); font-size:12px; letter-spacing:.14em; text-transform:uppercase; text-decoration:none;
+  }
+  .scroll-hint i{ width:1px; height:34px; background:linear-gradient(var(--neon), transparent); }
+
+  /* ============ TELEFON ============ */
+  .showcase{ padding:40px 0 72px; }
+  .stage{
+    display:flex; flex-direction:column; align-items:center;
+  }
+  .phone-glow{ position:relative; }
+  .phone-glow::before{
+    content:""; position:absolute; left:50%; top:50%; width:120%; height:80%;
+    transform:translate(-50%,-50%); border-radius:50%;
+    background:radial-gradient(closest-side, rgba(57,255,136,.28), transparent);
+    filter:blur(30px); z-index:-1;
+  }
+  .phone{
+    --ry:0deg;
+    position:relative; width:min(300px, 74vw); aspect-ratio:9/19.3;
+    border-radius:48px; padding:12px;
+    background:linear-gradient(145deg, #1a2a20, #050b07 45%, #0e1a12);
+    box-shadow:
+      0 0 0 1px rgba(57,255,136,.35),
+      0 0 22px rgba(57,255,136,.25),
+      inset 0 0 0 2px rgba(255,255,255,.04),
+      0 40px 80px -20px rgba(0,0,0,.8);
+    transform:perspective(1200px) rotateY(var(--ry));
+    will-change:transform;
+  }
+  /* yan tuşlar */
+  .phone::before, .phone::after{
+    content:""; position:absolute; width:3px; border-radius:2px; background:#1b2a20;
+  }
+  .phone::before{ right:-3px; top:22%; height:12%; }
+  .phone::after{ left:-3px; top:18%; height:7%; box-shadow:0 70px 0 #1b2a20; }
+  .screen{
+    position:relative; height:100%; border-radius:38px; overflow:hidden;
+    background:#0b1a10;
+  }
+  /* Ekran slaytları: 0 = logo tanıtımı, sonrakiler gerçek uygulama görüntüleri */
+  .slide{
+    position:absolute; inset:0; opacity:0;
+    transition:opacity .9s ease;
+  }
+  .slide.active{ opacity:1; }
+  .slide.intro{
+    background:
+      radial-gradient(circle at 50% 38%, rgba(57,255,136,.18), transparent 55%),
+      linear-gradient(180deg, #06150c, #020704);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px;
+  }
+  .slide.shot{ background:#0b1a10; }
+  .slide.shot img{
+    position:absolute; left:0; top:36px; width:100%; height:calc(100% - 36px);
+    object-fit:cover; object-position:top center;
+  }
+  /* sahte durum çubuğu (çentiğin iki yanı) */
+  .statusbar{
+    position:absolute; top:0; left:0; right:0; height:36px; z-index:2; pointer-events:none;
+    display:flex; align-items:center; justify-content:space-between; padding:4px 26px 0;
+    font:700 12px "Manrope", sans-serif; color:#e9f5ec;
+    opacity:0; transition:opacity .6s ease;
+  }
+  .screen.on-shot .statusbar{ opacity:1; }
+  .statusbar svg{ height:11px; width:auto; fill:currentColor; }
+  .statusbar .icons{ display:flex; gap:5px; align-items:center; }
+  /* ekranda çok hafif harita sokak deseni */
+  .slide.intro::before{
+    content:""; position:absolute; inset:0; opacity:.5;
+    background-image:
+      linear-gradient(rgba(57,255,136,.07) 2px, transparent 2px),
+      linear-gradient(90deg, rgba(57,255,136,.07) 2px, transparent 2px);
+    background-size:44px 44px; transform:rotate(-12deg) scale(1.4);
+    mask-image:radial-gradient(circle at 50% 40%, transparent 22%, #000 70%);
+    -webkit-mask-image:radial-gradient(circle at 50% 40%, transparent 22%, #000 70%);
+  }
+  /* ekran yansıması */
+  .screen::after{
+    content:""; position:absolute; inset:0; pointer-events:none; z-index:3;
+    background:linear-gradient(115deg, rgba(255,255,255,.07) 0%, transparent 32%);
+  }
+  .island{
+    position:absolute; top:14px; left:50%; transform:translateX(-50%);
+    width:30%; height:26px; border-radius:20px; background:#000; z-index:4;
+  }
+
+  /* slayt başlığı + noktalar (telefonun altında) */
+  .shot-caption{
+    margin-top:26px; min-height:24px; text-align:center;
+    font-family:"Sora", sans-serif; font-weight:700; font-size:17px; letter-spacing:-.01em;
+    transition:opacity .35s ease;
+  }
+  .shot-caption.fade{ opacity:0; }
+  .dots{ display:flex; gap:8px; justify-content:center; margin-top:12px; }
+  .dots button{
+    width:8px; height:8px; padding:0; border:0; border-radius:99px; cursor:pointer;
+    background:rgba(57,255,136,.25); transition:width .3s ease, background .3s ease, box-shadow .3s ease;
+  }
+  .dots button[aria-current="true"]{ width:26px; background:var(--neon); box-shadow:0 0 10px rgba(57,255,136,.6); }
+  .dots button:focus-visible{ outline:2px solid var(--neon); outline-offset:3px; }
+  .app-logo{
+    position:relative; z-index:1; width:44%; aspect-ratio:1; border-radius:24%;
+    box-shadow:0 0 0 1px rgba(57,255,136,.3), 0 0 40px rgba(57,255,136,.35);
+  }
+  .app-name{
+    position:relative; z-index:1; font-family:"Sora", sans-serif; font-weight:800;
+    font-size:26px; letter-spacing:-.02em;
+  }
+  .app-tag{ position:relative; z-index:1; margin-top:-12px; color:var(--muted); font-size:13px; }
+
+  /* ============ MAĞAZA BUTONLARI ============ */
+  .stores{ display:flex; flex-wrap:wrap; justify-content:center; gap:14px; margin-top:32px; }
+  .store{
+    display:flex; align-items:center; gap:12px; min-width:220px;
+    padding:12px 20px; border-radius:16px; text-decoration:none;
+    background:rgba(10,29,18,.75); border:1px solid var(--line); color:var(--text);
+    transition:border-color .2s, box-shadow .2s, transform .2s;
+  }
+  .store svg{ width:26px; height:26px; flex:none; fill:currentColor; }
+  .store small{ display:block; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+  .store strong{ display:block; font-family:"Sora", sans-serif; font-size:17px; font-weight:700; line-height:1.2; }
+  .store .soon{
+    margin-left:auto; padding:3px 9px; border-radius:999px; font-size:11px; font-weight:700;
+    color:var(--neon); border:1px solid rgba(57,255,136,.4); background:rgba(57,255,136,.08); white-space:nowrap;
+  }
+  .store:hover, .store:focus-visible{ border-color:var(--neon); box-shadow:var(--glow); transform:translateY(-2px); outline:none; }
+  .store[aria-disabled="true"]{ cursor:default; }
+
+  /* ============ BUTONLAR ============ */
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:10px;
+    height:50px; padding:0 24px; border-radius:14px; text-decoration:none; cursor:pointer;
+    font:700 15px "Manrope", sans-serif; letter-spacing:.01em;
+    transition:box-shadow .2s, transform .2s, background .2s, border-color .2s;
+  }
+  .btn-neon{
+    color:#02130a; background:linear-gradient(135deg, var(--neon), var(--neon-2));
+    box-shadow:0 0 0 1px rgba(57,255,136,.6), 0 0 26px rgba(57,255,136,.35);
+  }
+  .btn-neon:hover, .btn-neon:focus-visible{ transform:translateY(-2px); box-shadow:0 0 0 1px var(--neon), 0 0 40px rgba(57,255,136,.55); outline:none; }
+  .btn-ghost{ color:var(--text); background:rgba(10,29,18,.75); border:1px solid var(--line); }
+  .btn-ghost:hover, .btn-ghost:focus-visible{ border-color:var(--neon); box-shadow:var(--glow); transform:translateY(-2px); outline:none; }
+  .btn svg{ width:18px; height:18px; flex:none; }
+  .hero-cta{ margin-top:30px; }
+
+  /* ============ BÖLÜM BAŞLIKLARI ============ */
+  .section{ padding:56px 0; }
+  .section-head{ text-align:center; margin-bottom:34px; }
+  .kicker{ color:var(--neon); font-size:12px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; }
+  .section-head h2{
+    margin:8px 0 0; font-family:"Sora", sans-serif; font-weight:800;
+    font-size:clamp(28px, 4.6vw, 42px); letter-spacing:-.03em; line-height:1.15;
+  }
+
+  /* ============ NASIL ÇALIŞIR ============ */
+  .steps{ display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; counter-reset:step; }
+  .step{
+    position:relative; padding:24px 22px 22px; border-radius:var(--radius);
+    background:linear-gradient(180deg, rgba(10,29,18,.85), rgba(4,14,8,.85));
+    border:1px solid var(--line);
+    transition:border-color .25s, box-shadow .25s, transform .25s, opacity .8s ease;
+  }
+  .step:hover{ border-color:rgba(57,255,136,.5); box-shadow:0 0 30px rgba(57,255,136,.12); }
+  .step::before{
+    counter-increment:step; content:"0" counter(step);
+    position:absolute; top:18px; right:20px;
+    font-family:"Sora", sans-serif; font-weight:800; font-size:34px; line-height:1;
+    color:transparent; -webkit-text-stroke:1px rgba(57,255,136,.3);
+  }
+  .step-icon{
+    width:46px; height:46px; border-radius:13px; margin-bottom:16px;
+    display:flex; align-items:center; justify-content:center; color:var(--neon);
+    background:rgba(57,255,136,.08); border:1px solid rgba(57,255,136,.3);
+    box-shadow:0 0 18px rgba(57,255,136,.15);
+  }
+  .step-icon svg{ width:22px; height:22px; }
+  .step h3{ margin:0 0 6px; font-family:"Sora", sans-serif; font-size:19px; font-weight:700; letter-spacing:-.01em; }
+  .step p{ margin:0; color:var(--muted); font-size:15px; }
+  .step p b{ color:var(--text); }
+
+  /* ============ TESTER KARTI ============ */
+  .tester{
+    position:relative; overflow:hidden; border-radius:24px; padding:clamp(24px, 5vw, 44px);
+    background:
+      radial-gradient(80% 120% at 100% 0%, rgba(57,255,136,.14), transparent 60%),
+      linear-gradient(180deg, rgba(10,29,18,.92), rgba(4,14,8,.92));
+    border:1px solid rgba(57,255,136,.45);
+    box-shadow:0 0 0 1px rgba(57,255,136,.05), 0 0 50px rgba(57,255,136,.12);
+    display:grid; grid-template-columns:1.1fr 1fr; gap:32px; align-items:center;
+  }
+  .tester h2{ margin:8px 0 10px; font-family:"Sora", sans-serif; font-weight:800; font-size:clamp(26px, 4vw, 36px); letter-spacing:-.03em; line-height:1.15; }
+  .tester .intro{ margin:0; color:var(--muted); }
+  .tester .intro b, .tester li b{ color:var(--text); }
+  .tester ol{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:12px; }
+  .tester li{
+    display:flex; gap:14px; align-items:flex-start; padding:14px 16px; border-radius:14px;
+    background:rgba(3,10,6,.6); border:1px solid rgba(57,255,136,.12);
+  }
+  .tester li .n{
+    flex:none; width:28px; height:28px; border-radius:50%;
     display:flex; align-items:center; justify-content:center;
-    font-size:34px; margin:0 auto 18px;
+    font:800 13px "Sora", sans-serif; color:#02130a; background:var(--neon);
+    box-shadow:0 0 12px rgba(57,255,136,.5);
   }
-  h1{ font-size:28px; font-weight:800; margin:0 0 10px; }
-  .lede{ color:var(--text-muted); font-size:15px; line-height:1.6; margin:0 0 28px; }
-  .links{ display:flex; flex-direction:column; gap:10px; }
-  .links a{
-    display:block; background:var(--surface); border:1px solid var(--border);
-    border-radius:14px; padding:14px 18px; text-align:left;
-    color:var(--text); text-decoration:none; font-weight:700; font-size:14px;
-    transition:border-color .15s;
+  .tester li strong{ display:block; font-size:15px; }
+  .tester li .t{ display:block; color:var(--muted); font-size:14px; line-height:1.5; }
+  .tester li a{ color:var(--neon); font-weight:700; text-decoration:none; }
+  .tester li a:hover{ text-decoration:underline; }
+  .tester .actions{ display:flex; flex-wrap:wrap; gap:12px; margin-top:24px; }
+
+  /* ============ FOOTER ============ */
+  footer{ border-top:1px solid rgba(57,255,136,.08); padding:18px 0; font-size:13px; color:var(--muted); }
+  footer .wrap{ display:flex; flex-wrap:wrap; gap:8px 20px; justify-content:space-between; align-items:center; }
+  .mail{ color:var(--text); text-decoration:none; font-weight:600; transition:color .15s, text-shadow .15s; }
+  .mail:hover, .mail:focus-visible{ color:var(--neon); text-shadow:0 0 12px rgba(57,255,136,.5); outline:none; }
+
+  /* ============ GİRİŞ ANİMASYONLARI ============ */
+  .reveal{ opacity:0; transform:translateY(16px); transition:opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1); }
+  .reveal.in{ opacity:1; transform:none; }
+  .d1{ transition-delay:.08s; } .d2{ transition-delay:.18s; } .d3{ transition-delay:.3s; }
+  .phone-in{ opacity:0; transform:scale(.94); transition:opacity .9s ease, transform .9s cubic-bezier(.2,.7,.2,1); }
+  .phone-in.in{ opacity:1; transform:none; }
+
+  @media (max-width:860px){
+    .steps{ grid-template-columns:1fr; }
+    .tester{ grid-template-columns:1fr; gap:24px; }
   }
-  .links a:hover{ border-color:var(--accent); }
-  .links a span.sub{
-    display:block; color:var(--text-muted); font-weight:500; font-size:12.5px; margin-top:2px;
+  @media (max-width:520px){
+    .tester .actions .btn, .hero-cta{ width:100%; }
+    :root{ --nav-h:58px; }
+    .brand{ font-size:20px; }
+    .menu-btn .label{ display:none; }
+    .dropdown{ position:fixed; left:16px; right:16px; top:calc(var(--nav-h) + 8px); min-width:0; }
+    .store{ width:100%; }
+    footer .wrap{ justify-content:center; text-align:center; }
   }
-  footer{ margin-top:28px; color:var(--text-muted); font-size:12.5px; }
-  footer a{ color:var(--accent); text-decoration:none; }
+  @media (prefers-reduced-motion:reduce){
+    html{ scroll-behavior:auto; }
+    .reveal,.phone-in{ opacity:1; transform:none; transition:none; }
+    .eyebrow .dot{ animation:none; }
+  }
 </style>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&display=swap">
 </head>
 <body>
-<div class="page">
-  <div class="logo">🅿️</div>
-  <h1>ParkEt</h1>
-  <p class="lede">Sürücülerin boşalan park yerlerini birbirine bildirdiği topluluk uygulaması.</p>
+<div class="backdrop" aria-hidden="true"></div>
 
-  <div class="links">
-    <a href="/privacy.html">Gizlilik Politikası<span class="sub">Hangi veriyi topluyoruz, neden, ne kadar saklıyoruz</span></a>
-    <a href="/terms.html">Kullanım Koşulları<span class="sub">Uygulama ve ParkEt Plus aboneliği kuralları</span></a>
-    <a href="/hesap-silme.html">Hesap Silme<span class="sub">Hesabını ve verilerini kalıcı olarak sil</span></a>
+<!-- ============ NAVBAR ============ -->
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Ana sayfa">
+      <img data-cfg-src="logo" src="assets/logo.png" alt=""/>
+      <span data-cfg-name>Park<span class="accent">Et</span></span>
+    </a>
+
+    <nav class="menu">
+      <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="menuList">
+        <span class="label">Menü</span>
+        <span class="bars" aria-hidden="true"><span></span><span></span><span></span></span>
+      </button>
+      <ul class="dropdown" id="menuList">
+        <li><a data-cfg-href="terms"   href="/terms.html">Kullanım Koşulları</a></li>
+        <li><a data-cfg-href="privacy" href="/privacy.html">Gizlilik Politikası</a></li>
+        <li><a data-cfg-href="deleteAccount" href="/hesap-silme.html">Hesap Silme</a></li>
+        <li><a data-cfg-href="contact" href="mailto:mert.ismet.ozel@gmail.com">İletişim</a></li>
+      </ul>
+    </nav>
   </div>
+</header>
 
-  <footer>ParkEt · <a href="mailto:mert.ismet.ozel@gmail.com">mert.ismet.ozel@gmail.com</a></footer>
-</div>
+<main id="top">
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="eyebrow reveal"><span class="dot"></span><span data-cfg-text="eyebrow">Kapalı test aşamasında</span></div>
+      <h1 class="reveal d1" data-cfg-name>Park<span class="accent">Et</span></h1>
+      <p class="lede reveal d2" data-cfg-html="description">
+        ParkEt uygulaması ile <b>park yeri bulmak</b> artık sorun değil! Sürücüler boşalan park yerlerini birbirine bildirsin, <b>cömertlik kazansın!</b>
+      </p>
+      <div class="reveal d3" data-tester-only>
+        <a class="btn btn-neon hero-cta" href="#test">
+          Kapalı teste katıl
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+      <a class="scroll-hint reveal d3" href="#showcase">Keşfet<i></i></a>
+    </div>
+  </section>
+
+  <!-- ============ TELEFON + MAĞAZALAR ============ -->
+  <section class="showcase" id="showcase">
+    <div class="wrap stage">
+      <div class="phone-glow phone-in" id="phoneWrap">
+        <div class="phone" id="phone">
+          <div class="screen" id="screen">
+            <div class="island"></div>
+            <div class="statusbar" aria-hidden="true">
+              <span>9:41</span>
+              <span class="icons">
+                <svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2.5" width="3" height="9.5" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+                <svg viewBox="0 0 26 12"><rect x="0.5" y="0.5" width="21" height="11" rx="3" fill="none" stroke="currentColor"/><rect x="2.5" y="2.5" width="15" height="7" rx="1.5"/><rect x="23" y="4" width="2" height="4" rx="1"/></svg>
+              </span>
+            </div>
+            <div class="slide intro active">
+              <img class="app-logo" data-cfg-src="logo" src="assets/logo.png" alt="ParkEt logosu"/>
+              <div class="app-name" data-cfg-name>Park<span class="accent">Et</span></div>
+              <div class="app-tag" data-cfg-text="phoneTag">Boşalan yer, bekleyen sürücüye.</div>
+            </div>
+            <!-- uygulama görüntüleri CONFIG.screens'ten eklenir -->
+          </div>
+        </div>
+      </div>
+      <div class="shot-caption" id="shotCaption" aria-live="polite">ParkEt</div>
+      <div class="dots" id="dots" role="group" aria-label="Uygulama görüntüleri"></div>
+
+      <div class="stores">
+        <a class="store" id="appStore" aria-disabled="true">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.37 12.6c-.02-2.3 1.88-3.4 1.97-3.46-1.07-1.57-2.74-1.78-3.33-1.8-1.42-.15-2.77.83-3.49.83-.72 0-1.83-.81-3.01-.79-1.55.02-2.98.9-3.78 2.29-1.61 2.8-.41 6.94 1.16 9.21.77 1.11 1.68 2.36 2.88 2.31 1.16-.05 1.6-.75 3-.75s1.79.75 3.01.72c1.25-.02 2.03-1.13 2.79-2.25.88-1.29 1.24-2.54 1.26-2.6-.03-.01-2.42-.93-2.46-3.71zM14.07 5.85c.64-.77 1.07-1.85.95-2.92-.92.04-2.03.61-2.69 1.38-.59.68-1.11 1.78-.97 2.83 1.03.08 2.07-.52 2.71-1.29z"/></svg>
+          <span><small>İndir</small><strong>App Store</strong></span>
+          <span class="soon">Çok Yakında</span>
+        </a>
+        <a class="store" id="googlePlay" aria-disabled="true">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22.018 13.298l-3.919 2.218-3.515-3.493 3.543-3.521 3.891 2.202a1.49 1.49 0 0 1 0 2.594zM1.337.924a1.486 1.486 0 0 0-.112.568v21.017c0 .217.045.419.124.6l11.155-11.087L1.337.924zm12.207 10.065l3.258-3.238L3.45.195a1.466 1.466 0 0 0-.946-.179l11.04 10.973zm0 2.067l-11 10.933c.298.036.612-.016.906-.183l13.324-7.54-3.23-3.21z"/></svg>
+          <span><small>İndir</small><strong>Google Play</strong></span>
+          <span class="soon">Çok Yakında</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ NASIL ÇALIŞIR ============ -->
+  <section class="section" id="nasil">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div class="kicker">Nasıl çalışır?</div>
+        <h2>Üç adımda <span class="accent">park yeri</span></h2>
+      </div>
+      <div class="steps">
+        <article class="step reveal">
+          <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></div>
+          <h3>Çıkarken bildir</h3>
+          <p>Park yerinden ayrılmadan önce tek dokunuşla uygulamaya haber ver.</p>
+        </article>
+        <article class="step reveal d1">
+          <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <h3>Bekleyen gelsin</h3>
+          <p>Yakındaki bir sürücü yerini ayırır ve varış süresiyle yola çıkar.</p>
+        </article>
+        <article class="step reveal d2">
+          <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+          <h3>Parkpuan kazan</h3>
+          <p>Yerini paylaştıkça puan kazan. Sen ver, sana da verilsin — <b>cömertlik kazansın!</b></p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ KAPALI TEST ============ -->
+  <section class="section" id="test" data-tester-only>
+    <div class="wrap">
+      <div class="tester reveal">
+        <div>
+          <div class="kicker">Erken erişim</div>
+          <h2>ParkEt'i <span class="accent">ilk deneyenlerden</span> ol</h2>
+          <p class="intro">Uygulama şu an Google Play'de <b>kapalı test</b> aşamasında. Android telefonun varsa
+            katıl, uygulamayı herkesten önce kullan ve geliştirmemize yardım et.</p>
+          <div class="actions">
+            <a class="btn btn-neon" data-cfg-href="testerGroup" href="https://groups.google.com/g/parket-test" target="_blank" rel="noopener">1 · Gruba katıl</a>
+            <a class="btn btn-ghost" data-cfg-href="testerOptIn" href="https://play.google.com/apps/testing/com.codermert.parket" target="_blank" rel="noopener">2 · Test kullanıcısı ol</a>
+          </div>
+        </div>
+        <ol>
+          <li><span class="n">1</span><span><strong>Google Grubuna katıl</strong>
+            <span class="t"><a data-cfg-href="testerGroup" href="https://groups.google.com/g/parket-test" target="_blank" rel="noopener">ParkEt Test</a> grubuna, Play Store'da kullandığın <b>Gmail hesabıyla</b> katıl.</span></span></li>
+          <li><span class="n">2</span><span><strong>Test kullanıcısı ol</strong>
+            <span class="t"><a data-cfg-href="testerOptIn" href="https://play.google.com/apps/testing/com.codermert.parket" target="_blank" rel="noopener">Test sayfasını</a> aç ve “Test kullanıcısı ol” butonuna bas.</span></span></li>
+          <li><span class="n">3</span><span><strong>İndir ve 14 gün tut</strong>
+            <span class="t">Google Play'den ParkEt'i indir. Uygulamayı en az 14 gün silmemen yeterli.</span></span></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <a class="mail" data-cfg-mail href="mailto:mert.ismet.ozel@gmail.com">mert.ismet.ozel@gmail.com</a>
+    <span>© <span id="year">2026</span> <span data-cfg-text="appName">ParkEt</span></span>
+  </div>
+</footer>
+
+<script>
+/* ================================================================
+   AYARLAR — siteyi değiştirmek için yalnızca burayı düzenle.
+   Mağaza linki boş ("") ise buton "Çok Yakında" olarak kalır;
+   link yazınca otomatik olarak aktif "İndir" butonuna dönüşür.
+   ================================================================ */
+const CONFIG = {
+  appName:     "ParkEt",
+  appNameAccentFrom: 4,              // adın kaçıncı harfinden itibaren neon yeşil olsun ("Park|Et")
+  eyebrow:     "Kapalı test aşamasında",
+  description: "ParkEt uygulaması ile <b>park yeri bulmak</b> artık sorun değil! Sürücüler boşalan park yerlerini birbirine bildirsin, <b>cömertlik kazansın!</b>",
+  phoneTag:    "Boşalan yer, bekleyen sürücüye.",
+  logo:        "assets/logo.png",
+  // Telefonun ekranında sırayla dönen görüntüler. introCaption = logo ekranının başlığı.
+  introCaption: "Topluluk gücüyle park",
+  screens: [
+    { src: "assets/screens/1-hosgeldin.webp", caption: "Saniyeler içinde giriş yap" },
+    { src: "assets/screens/2-cikis.webp",     caption: "Çıkarken bildir, sayaç başlasın" },
+    { src: "assets/screens/3-spot.webp",      caption: "Yer veren sürücüyü tanı" },
+    { src: "assets/screens/4-profil.webp",    caption: "Puanların ve rozetlerin" },
+    { src: "assets/screens/5-plus.webp",      caption: "ParkEt Plus ile daha fazlası" }
+  ],
+  slideSeconds: 3.5,
+  email:       "mert.ismet.ozel@gmail.com",
+  appStoreUrl:   "",
+  googlePlayUrl: "",
+  // Kapalı test: false yapınca "Kapalı teste katıl" butonu ve tester bölümü tamamen gizlenir
+  showTester:    true,
+  links: {
+    terms:         "/terms.html",
+    privacy:       "/privacy.html",
+    deleteAccount: "/hesap-silme.html",
+    contact:       null,             // null → e-posta adresine mailto
+    testerGroup:   "https://groups.google.com/g/parket-test",
+    testerOptIn:   "https://play.google.com/apps/testing/com.codermert.parket"
+  }
+};
+
+(function applyConfig(){
+  const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const n = CONFIG.appName, k = CONFIG.appNameAccentFrom;
+  const nameHtml = k > 0 && k < n.length
+    ? esc(n.slice(0, k)) + '<span class="accent">' + esc(n.slice(k)) + '</span>'
+    : esc(n);
+  const links = { ...CONFIG.links, contact: CONFIG.links.contact || "mailto:" + CONFIG.email };
+
+  document.querySelectorAll("[data-cfg-name]").forEach(el => el.innerHTML = nameHtml);
+  document.querySelectorAll("[data-cfg-text]").forEach(el => el.textContent = CONFIG[el.dataset.cfgText]);
+  document.querySelectorAll("[data-cfg-html]").forEach(el => el.innerHTML = CONFIG[el.dataset.cfgHtml]);
+  document.querySelectorAll("[data-cfg-src]").forEach(el => el.src = CONFIG[el.dataset.cfgSrc]);
+  document.querySelectorAll("[data-cfg-href]").forEach(el => el.href = links[el.dataset.cfgHref]);
+  document.querySelectorAll("[data-cfg-mail]").forEach(el => { el.href = "mailto:" + CONFIG.email; el.textContent = CONFIG.email; });
+  if (!CONFIG.showTester) document.querySelectorAll("[data-tester-only]").forEach(el => el.remove());
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  [["appStore", CONFIG.appStoreUrl], ["googlePlay", CONFIG.googlePlayUrl]].forEach(([id, url]) => {
+    const el = document.getElementById(id);
+    if (url) {
+      el.href = url; el.target = "_blank"; el.rel = "noopener";
+      el.removeAttribute("aria-disabled");
+      el.querySelector(".soon").remove();
+    } else {
+      el.addEventListener("click", e => e.preventDefault());
+    }
+  });
+})();
+
+/* ---------------- Telefon ekranı slayt gösterisi ----------------
+   Yalnızca telefon görünürken döner; sekme arka plandayken durur.          */
+(function slideshow(){
+  const screen = document.getElementById("screen");
+  const caption = document.getElementById("shotCaption");
+  const dotsEl = document.getElementById("dots");
+  const slides = [screen.querySelector(".slide.intro")];
+  const captions = [CONFIG.introCaption];
+
+  CONFIG.screens.forEach(s => {
+    const div = document.createElement("div");
+    div.className = "slide shot";
+    const img = document.createElement("img");
+    img.src = s.src; img.alt = s.caption;
+    div.appendChild(img); screen.appendChild(div);
+    // görünmez (opacity:0) slaytın görüntüsünü önceden çöz → geçişte boş kare görünmesin
+    if (img.decode) img.decode().catch(() => {});
+    slides.push(div); captions.push(s.caption);
+  });
+
+  if (slides.length < 2) { caption.remove(); dotsEl.remove(); return; }
+
+  const dots = slides.map((_, i) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.setAttribute("aria-label", captions[i]);
+    b.addEventListener("click", () => { go(i); restart(); });
+    dotsEl.appendChild(b); return b;
+  });
+
+  let idx = 0, timer = 0, visible = false;
+  function go(i){
+    slides[idx].classList.remove("active"); dots[idx].removeAttribute("aria-current");
+    idx = i;
+    slides[idx].classList.add("active"); dots[idx].setAttribute("aria-current", "true");
+    screen.classList.toggle("on-shot", idx > 0);
+    caption.classList.add("fade");
+    setTimeout(() => { caption.textContent = captions[idx]; caption.classList.remove("fade"); }, 200);
+  }
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function restart(){
+    clearInterval(timer); timer = 0;
+    if (visible && !reduce && !document.hidden)
+      timer = setInterval(() => go((idx + 1) % slides.length), CONFIG.slideSeconds * 1000);
+  }
+  go(0);
+  new IntersectionObserver(([en]) => { visible = en.isIntersecting; restart(); }, { threshold: 0.3 }).observe(screen);
+  document.addEventListener("visibilitychange", restart);
+})();
+
+/* ---------------- Menü (dropdown) ---------------- */
+(function menu(){
+  const btn = document.getElementById("menuBtn");
+  const list = document.getElementById("menuList");
+  const set = open => { btn.setAttribute("aria-expanded", open); list.classList.toggle("open", open); };
+  btn.addEventListener("click", e => { e.stopPropagation(); set(btn.getAttribute("aria-expanded") !== "true"); });
+  document.addEventListener("click", e => { if (!list.contains(e.target)) set(false); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") { set(false); btn.focus(); } });
+})();
+
+/* ---------------- Giriş animasyonları ---------------- */
+(function reveal(){
+  const els = document.querySelectorAll(".reveal, .phone-in");
+  if (!("IntersectionObserver" in window)) { els.forEach(el => el.classList.add("in")); return; }
+  const io = new IntersectionObserver(entries => entries.forEach(en => {
+    if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
+  }), { threshold: 0.2 });
+  els.forEach(el => io.observe(el));
+})();
+
+/* ---------------- Telefon: yalnız yatay fare → Y ekseni dönüşü ----------------
+   Sadece gerçek fare olan cihazlarda çalışır. rAF döngüsü yalnızca telefon
+   hedef açıya yaklaşana kadar döner, sonra durur (boşta CPU harcamaz).        */
+(function phoneTilt(){
+  const fine = matchMedia("(hover: hover) and (pointer: fine)").matches;
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!fine || reduce) return;
+
+  const phone = document.getElementById("phone");
+  const MAX = 12;          // derece
+  const EASE = 0.08;       // yumuşaklık (küçük = daha yumuşak)
+  let target = 0, current = 0, raf = 0, visible = false;
+
+  const tick = () => {
+    current += (target - current) * EASE;
+    if (Math.abs(target - current) < 0.01) current = target;
+    phone.style.setProperty("--ry", current.toFixed(2) + "deg");
+    raf = current === target ? 0 : requestAnimationFrame(tick);
+  };
+  const kick = () => { if (!raf) raf = requestAnimationFrame(tick); };
+
+  window.addEventListener("mousemove", e => {
+    if (!visible) return;
+    target = ((e.clientX / window.innerWidth) * 2 - 1) * MAX;
+    kick();
+  }, { passive: true });
+  document.documentElement.addEventListener("mouseleave", () => { target = 0; kick(); });
+
+  new IntersectionObserver(([en]) => { visible = en.isIntersecting; }).observe(phone);
+})();
+</script>
 </body>
 </html>
